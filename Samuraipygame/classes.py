@@ -161,7 +161,7 @@ class Background3:
         screen.blit(self.image, (0,0))
 
 class BattleGame:
-    def __init__(self):
+    def __init__(self, oyuncu_adi: str = "Samurai"):
         # Pygame start
         pygame.init()
 
@@ -185,7 +185,7 @@ class BattleGame:
         self.current_bg = self.bg_level1
 
         # Karakterlerin oluşturulması
-        self.oyuncu = Samurai("Sekiro", can = 100, guc = 20, kalkan = 5)
+        self.oyuncu = Samurai(oyuncu_adi, can = 100, guc = 20, kalkan = 5)
         self.oyuncu_max_can = self.oyuncu.can
 
         self.boss_gyoubu = Gyoubu("Gyoubu Oniwa", can = 150, guc = 20, kalkan = 5)
