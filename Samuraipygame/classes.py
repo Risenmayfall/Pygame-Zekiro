@@ -60,35 +60,76 @@ class Isshin(Chars):
 class CharView:
     """
     Bir karakterin ekrandaki temsili:
-    karakter
-    image
+    States: Normal, Attack, Damage
     pos: ekrandaki merkez konum
     """
-    karakter: Chars
-    image: pygame.Surface
-    pos: pygame.Vector2
-    alive: bool = True
+    def __init__(self, karakter: Chars, img_normal_path: str, img_attack_path: str, img_damage_path: str, pos: pygame.Vector2):
+        self.karakter = karakter
+        self.pos = pos
+        self.alive = True
 
+        try:
+            self.images = {
+                "normal": pygame.image.load(img_normal_path).convert_alpha(),
+                "attack": pygame.image.load(img_attack_path).convert_alpha(),
+                "damage": pygame.image.load(img_damage_path).convert_alpha()
+            }
+        except pygame.error as e:
+            print(f"{karakter.isim} görselleri yüklenirken hata oluştu!")
+            print("Hata detay: ", e)
+            pygame.quit()
+            sys.exit()
+
+        # Aktif durum ve zamanlayıcılar
+        self.current_state = "normal"
+        self.state_timer = 0 # Özel durumların ekranda kalma süresi
+    
+    @property
+    def image(self) -> pygame.Surface:
+        """O anki duruma göre doğru görseli döndürür."""
+        return self.images[self.current_state]
+    
     @property
     def rect(self) -> pygame.Rect:
-        r = self.image.get_rect(center=(int(self.pos.x), int(self.pos.y)))
-        return r
+        return self.image.get_rect(center=(int(self.pos.x), int(self.pos.y)))
     
+    def trigger_state(self, new_state: str, duration: int = 500):
+        """Karakterin durumunu değiştirir (Örnek attack yapar ve 500ms sonra normale döndürür)"""
+        self.current_state = new_state
+        self.state_timer = pygame.time.get_ticks() + duration
+
+    def update_animation(self):
+        """Saldırı veya hasar görselinin süresi bittiyse otomatik normale döndürür"""
+        if self.current_state != "normal":
+            if pygame.time.get_ticks() > self.state_timer:
+                self.current_state = "normal"
+
     def draw(self, screen: pygame.Surface, font: pygame.font.Font, highlight: bool = False, scale: float = 1.0):
-        # Highlight true ise etrafına çerçeve atar
-        if not self.alive:
+        if not self.alive or self.karakter.can <= 0:
+            self.alive = False
             return
         
+        # Zamanlayıcıyı kontrol et ve durumu güncelle
+        self.update_animation()
+
         img = self.image
         if abs(scale - 1.0) > 1e-3:
             w, h = img.get_size()
             img = pygame.transform.smoothscale(img, (int(w * scale), int(h * scale)))
-
+        
         draw_rect = img.get_rect(center=(int(self.pos.x), int(self.pos.y)))
         screen.blit(img, draw_rect)
 
+        if highlight:
+            pygame.draw.rect(screen, (255,215,0), draw_rect.inflate(6,6), 3)
+
+        # Can barı üstte çiziliyor, buradaki isim bilgisini şık tutalım
+        info = f"{self.karakter.isim}"
+        text = font.render(info, True, (255, 255, 255))
+        text_rect = text.get_rect(midtop=(draw_rect.centerx, draw_rect.bottom + 6))
+        screen.blit(text, text_rect)
+    
     def hit_test(self, mouse_pos) -> bool:
-        # Point n click?
         if not self.alive:
             return False
         return self.rect.collidepoint(mouse_pos)
@@ -177,6 +218,22 @@ class BattleGame:
         self.boss_genichiro = Genichiro("Genichiro Ashina", can = 200, guc = 25, kalkan = 5)
         self.boss_isshin = Isshin("Isshin Ashina", can = 300, guc = 35, kalkan = 5)
 
+        # Oyuncu görünümü (Sol tarafta, ekranın ortasında)
+        self.oyuncu_view = CharView(
+            karakter = self.oyuncu,
+            img_normal_path = "Images/Chars/Samurai/SamuraiIdleFinal.png",
+            img_attack_path = "Images/Chars/Samurai/SamuraiAttackFinal.png",
+            img_damage_path = "Images/Chars/Samurai/SamuraiDamageFinal.png",
+            pos = pygame.Vector2(350, self.SCREEN_HEIGHT // 2 + 50)
+        )
+
+        # Boss görünümleri (Sağ tarafta)
+        self.boss_views = {
+            self.bg_level1: CharView(self.boss_gyoubu, "Images/Chars/Gyoubu/GyoubuIdleFinal.png", "Images/Chars/Gyoubu/GyoubuAttackFinal.png", "Images/Chars/Gyoubu/GyoubuDamageFinal.png", pygame.Vector2(1150, self.SCREEN_HEIGHT // 2 + 50)),
+            self.bg_level2: CharView(self.boss_genichiro, "Images/Chars/Genichiro/GenichiroIdleFinal.png", "Images/Chars/Genichiro/GenichiroAttackFinal.png", "Images/Chars/Genichiro/GenichiroDamageFinal.png", pygame.Vector2(1150, self.SCREEN_HEIGHT // 2 + 50)),
+            self.bg_level3: CharView(self.boss_isshin, "Images/Chars/Isshin/IsshinIdleFinal.png", "Images/Chars/Isshin/IsshinAttackFinal.png", "Images/Chars/Isshin/IsshinDamageFinal.png", pygame.Vector2(1150, self.SCREEN_HEIGHT // 2 + 50))
+        }
+
         # Maksimum canları sözlükte tutarak seviyeye göre kolayca çekebiliriz
         self.boss_max_cans = {
             self.bg_level1: self.boss_gyoubu.can,
@@ -246,6 +303,11 @@ class BattleGame:
             return self.boss_genichiro
         elif self.current_bg == self.bg_level3:
             return self.boss_isshin
+        
+    @property
+    def current_boss_view(self) -> CharView:
+        """Mevcut arka plana göre aktif bossun görsel temsilini getirir."""
+        return self.boss_views[self.current_bg]
 
     def handle_events(self):
         """Klavye, fare ve sistem olaylarını yönetir."""
@@ -253,19 +315,20 @@ class BattleGame:
             if event.type == pygame.QUIT:
                 self.running = False
 
-            
-           # Burayı şu anlık silmedim, 1 2 3 basınca ekran değişiyor
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_1:
-                    self.current_bg = self.bg_level1
-                elif event.key == pygame.K_2:
-                    self.current_bg = self.bg_level2
-                elif event.key == pygame.K_3:
-                    self.current_bg = self.bg_level3
-                elif event.key == pygame.K_SPACE:
+                # Space ile boss bize saldırır (Bu şu an deneme amaçlı, ileride soru cevap tabanlı bir oyun)
+                if event.key == pygame.K_SPACE:
                     self.current_boss.saldir(self.oyuncu)
+                    # Görsel tetiklemeler: Boss saldırıyor, oyuncu hasar alıyor
+                    self.current_boss_view.trigger_state("attack", duration=400)
+                    self.oyuncu_view.trigger_state("damage", duration=400)
+
+                # H tuşu ile oyuncu saldırır
                 elif event.key == pygame.K_h:
                     self.oyuncu.celik_firtina(self.current_boss)
+                    #Görsel tetiklemeler: Oyuncu saldırıyor, boss hasar alıyor
+                    self.oyuncu_view.trigger_state("attack", duration=400)
+                    self.current_boss_view.trigger_state("damage", duration=400)
             
 
     def update(self):
@@ -352,10 +415,14 @@ class BattleGame:
         text_rect = text_surface.get_rect(center=(self.SCREEN_WIDTH // 2, 40))
         self.screen.blit(text_surface, text_rect)
 
-        # 3- Can barlarını çiz
+        # 3- Karakterleri çiz
+        self.oyuncu_view.draw(self.screen, self.hp_font)
+        self.current_boss_view.draw(self.screen, self.hp_font)
+
+        # 4- Can barlarını çiz
         self.draw_health_bars()
 
-        # 4- Ekranı güncelle
+        # 5- Ekranı güncelle
         pygame.display.flip()
         
 
