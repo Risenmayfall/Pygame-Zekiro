@@ -66,6 +66,7 @@ class CharView:
     def __init__(self, karakter: Chars, img_normal_path: str, img_attack_path: str, img_damage_path: str, pos: pygame.Vector2):
         self.karakter = karakter
         self.pos = pos
+        self.base_x = pos.x
         self.alive = True
 
         try:
@@ -93,16 +94,21 @@ class CharView:
     def rect(self) -> pygame.Rect:
         return self.image.get_rect(center=(int(self.pos.x), int(self.pos.y)))
     
-    def trigger_state(self, new_state: str, duration: int = 500):
+    def trigger_state(self, new_state: str, duration: int = 500, dash_offset: int = 0):
         """Karakterin durumunu değiştirir (Örnek attack yapar ve 500ms sonra normale döndürür)"""
         self.current_state = new_state
         self.state_timer = pygame.time.get_ticks() + duration
+
+        # Eğer karakter saldırı durumuna geçtiyse x konumunu ileri kaydır
+        if new_state == "attack":
+            self.pos.x = self.base_x + dash_offset
 
     def update_animation(self):
         """Saldırı veya hasar görselinin süresi bittiyse otomatik normale döndürür"""
         if self.current_state != "normal":
             if pygame.time.get_ticks() > self.state_timer:
                 self.current_state = "normal"
+                self.pos.x = self.base_x  # Karakteri orijinal pozisyonuna geri getirir.
 
     def draw(self, screen: pygame.Surface, font: pygame.font.Font, highlight: bool = False, scale: float = 1.0):
         if not self.alive or self.karakter.can <= 0:
@@ -122,12 +128,6 @@ class CharView:
 
         if highlight:
             pygame.draw.rect(screen, (255,215,0), draw_rect.inflate(6,6), 3)
-
-        # Can barı üstte çiziliyor, buradaki isim bilgisini şık tutalım
-        info = f"{self.karakter.isim}"
-        text = font.render(info, True, (255, 255, 255))
-        text_rect = text.get_rect(midtop=(draw_rect.centerx, draw_rect.bottom + 6))
-        screen.blit(text, text_rect)
     
     def hit_test(self, mouse_pos) -> bool:
         if not self.alive:
@@ -198,8 +198,8 @@ class BattleGame:
 
         # Zamanlayıcı ve font
         self.clock = pygame.time.Clock()
-        self.font = pygame.font.SysFont("ATC Laurel Black", 36, bold = True)
-        self.hp_font = pygame.font.SysFont("Arial", 20, bold = True)
+        self.font = pygame.font.SysFont("ATC Laurel Black", 50, bold = True)
+        self.hp_font = pygame.font.SysFont("Arial", 23, bold = True)
         self.title_card_font = pygame.font.SysFont("Times New Roman", 72, bold=True)
         self.victory_font = pygame.font.SysFont("Georgia", 90, bold = True)
 
@@ -224,14 +224,14 @@ class BattleGame:
             img_normal_path = "Images/Chars/Samurai/SamuraiIdleFinal.png",
             img_attack_path = "Images/Chars/Samurai/SamuraiAttackFinal.png",
             img_damage_path = "Images/Chars/Samurai/SamuraiDamageFinal.png",
-            pos = pygame.Vector2(350, self.SCREEN_HEIGHT // 2 + 50)
+            pos = pygame.Vector2(350, self.SCREEN_HEIGHT // 2 + 240)
         )
 
         # Boss görünümleri (Sağ tarafta)
         self.boss_views = {
-            self.bg_level1: CharView(self.boss_gyoubu, "Images/Chars/Gyoubu/GyoubuIdleFinal.png", "Images/Chars/Gyoubu/GyoubuAttackFinal.png", "Images/Chars/Gyoubu/GyoubuDamageFinal.png", pygame.Vector2(1150, self.SCREEN_HEIGHT // 2 + 50)),
-            self.bg_level2: CharView(self.boss_genichiro, "Images/Chars/Genichiro/GenichiroIdleFinal.png", "Images/Chars/Genichiro/GenichiroAttackFinal.png", "Images/Chars/Genichiro/GenichiroDamageFinal.png", pygame.Vector2(1150, self.SCREEN_HEIGHT // 2 + 50)),
-            self.bg_level3: CharView(self.boss_isshin, "Images/Chars/Isshin/IsshinIdleFinal.png", "Images/Chars/Isshin/IsshinAttackFinal.png", "Images/Chars/Isshin/IsshinDamageFinal.png", pygame.Vector2(1150, self.SCREEN_HEIGHT // 2 + 50))
+            self.bg_level1: CharView(self.boss_gyoubu, "Images/Chars/Gyoubu/GyoubuIdleFinal.png", "Images/Chars/Gyoubu/GyoubuAttackFinal.png", "Images/Chars/Gyoubu/GyoubuDamageFinal.png", pygame.Vector2(1150, self.SCREEN_HEIGHT // 2 + 150)),
+            self.bg_level2: CharView(self.boss_genichiro, "Images/Chars/Genichiro/GenichiroIdleFinal.png", "Images/Chars/Genichiro/GenichiroAttackFinal.png", "Images/Chars/Genichiro/GenichiroDamageFinal.png", pygame.Vector2(1150, self.SCREEN_HEIGHT // 2 + 185)),
+            self.bg_level3: CharView(self.boss_isshin, "Images/Chars/Isshin/IsshinIdleFinal.png", "Images/Chars/Isshin/IsshinAttackFinal.png", "Images/Chars/Isshin/IsshinDamageFinal.png", pygame.Vector2(1150, self.SCREEN_HEIGHT // 2 + 190))
         }
 
         # Maksimum canları sözlükte tutarak seviyeye göre kolayca çekebiliriz
@@ -320,14 +320,14 @@ class BattleGame:
                 if event.key == pygame.K_SPACE:
                     self.current_boss.saldir(self.oyuncu)
                     # Görsel tetiklemeler: Boss saldırıyor, oyuncu hasar alıyor
-                    self.current_boss_view.trigger_state("attack", duration=400)
+                    self.current_boss_view.trigger_state("attack", duration=400, dash_offset=-580) # Dashoffset karakterlerin birbirine hareket etmesi için girdiğimiz - veya + parametre
                     self.oyuncu_view.trigger_state("damage", duration=400)
 
                 # H tuşu ile oyuncu saldırır
                 elif event.key == pygame.K_h:
                     self.oyuncu.celik_firtina(self.current_boss)
                     #Görsel tetiklemeler: Oyuncu saldırıyor, boss hasar alıyor
-                    self.oyuncu_view.trigger_state("attack", duration=400)
+                    self.oyuncu_view.trigger_state("attack", duration=400, dash_offset=580)
                     self.current_boss_view.trigger_state("damage", duration=400)
             
 
@@ -417,7 +417,12 @@ class BattleGame:
 
         # 3- Karakterleri çiz
         self.oyuncu_view.draw(self.screen, self.hp_font)
-        self.current_boss_view.draw(self.screen, self.hp_font)
+        if self.current_boss == self.boss_isshin:
+            self.current_boss_view.draw(self.screen, self.hp_font, scale = 1.5)
+        elif self.current_boss == self.boss_genichiro:
+            self.current_boss_view.draw(self.screen, self.hp_font, scale=1.2)
+        else:
+            self.current_boss_view.draw(self.screen, self.hp_font, scale=1.0)
 
         # 4- Can barlarını çiz
         self.draw_health_bars()
