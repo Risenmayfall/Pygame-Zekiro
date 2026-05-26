@@ -27,15 +27,9 @@ class Chars:
 # Ana karakter 
 class Samurai(Chars):
     def celik_firtina(self, dusman: Chars) -> int:
-        ham = self.guc * 1.0
+        ham = self.guc * 1.5
         net = self._hasar_hesapla(ham)
         dusman.can = max(0,dusman.can - net)
-        return net
-    
-    def muhurlu_kader(self, dusman: Chars) -> int:
-        ham = self.guc * 2.5
-        net = self._hasar_hesapla(ham)
-        dusman.can = max(0, dusman.can - net)
         return net
 
 # Bosses
@@ -92,16 +86,6 @@ class CharView:
 
         draw_rect = img.get_rect(center=(int(self.pos.x), int(self.pos.y)))
         screen.blit(img, draw_rect)
-
-        # Çerçeve: hedef/aktif seçim için görsel ipucu
-        if highlight:
-            pygame.draw.rect(screen, (255, 215, 0), draw_rect.inflate(6, 6), 3)
-
-        # İsim ve can bilgisini karakterin altına yaz
-        info = f"{self.karakter.isim} | CAN: {self.karakter.can}"
-        text = font.render(info, True, (255, 255, 255))
-        text_rect = text.get_rect(midtop=(draw_rect.centerx, draw_rect.bottom + 6))
-        screen.blit(text, text_rect)
 
     def hit_test(self, mouse_pos) -> bool:
         # Point n click?
@@ -161,14 +145,14 @@ class Background3:
         screen.blit(self.image, (0,0))
 
 class BattleGame:
-    def __init__(self, oyuncu_adi: str = "Samurai"):
+    def __init__(self, screen, oyuncu_adi: str = "Samurai"):
         # Pygame start
         pygame.init()
 
         # Pencere boyutu ayarları
         self.SCREEN_WIDTH = 1500
         self.SCREEN_HEIGHT = 750
-        self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
+        self.screen = screen
         pygame.display.set_caption("Zekiro: Shadows Die Once")
 
         # Zamanlayıcı ve font
@@ -176,6 +160,7 @@ class BattleGame:
         self.font = pygame.font.SysFont("ATC Laurel Black", 36, bold = True)
         self.hp_font = pygame.font.SysFont("Arial", 20, bold = True)
         self.title_card_font = pygame.font.SysFont("Times New Roman", 72, bold=True)
+        self.victory_font = pygame.font.SysFont("Georgia", 90, bold = True)
 
 
         # Arka plan tanımlama
@@ -206,6 +191,35 @@ class BattleGame:
 
         self.bolum_ekrani_goster("BÖLÜM 1: KALEYE GİRİŞ")
     
+    def boss_yenildi_ekrani(self, boss_ismi: str):
+        """Mevcut ekranı hafifçe karartır, 'Düşman yenildi' yazar ve 3 saniye bekler"""
+
+        self.logs.append(f"{boss_ismi} yenildi.")
+        # 1- Ekranı hafifçe karartmak için yarı saydam bir yüzey oluştur
+        karartma_yuzeyi = pygame.Surface((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), pygame.SRCALPHA)
+        karartma_yuzeyi.fill((0,0,0, 180))
+        
+        # 2- Mevcut arka planı ve karakterleri son kez çizdiriyoruz (alt katman güncel kalsın diye)
+        self.current_bg.draw(self.screen)
+        self.draw_health_bars()
+
+        # 3- Hazırladığımız yarı saydam karartmayı oyunun üstüne seriyoruz
+        self.screen.blit(karartma_yuzeyi,(0,0))
+
+        # 4- Burada Sekiro'daki gibi bir sembol yapabilirdim ama zor, o yüzden kırmızı şerit çekmeye karar verdim
+        pygame.draw.rect(self.screen, (150, 0, 0), (0, self.SCREEN_HEIGHT // 2 - 60, self.SCREEN_WIDTH, 120))
+
+        # 5- Zafer yazısı
+        zafer_metni = self.victory_font.render("BOSS DEFEATED", True, (255,255,255))
+        zafer_rect = zafer_metni.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2))
+        self.screen.blit(zafer_metni, zafer_rect)
+
+        # 6- Ekranı güncelle ve 3 saniye boyunca zafer anı kalsın
+        pygame.display.flip()
+
+        pygame.event.clear()
+        pygame.time.delay(3000)
+
     def bolum_ekrani_goster(self, metin: str):
         """Ekranı karartıp 2.5 saniye boyunca bölüm adını gösterir."""
         # 1- Ekranı tamamen siyaha boya
@@ -239,8 +253,8 @@ class BattleGame:
             if event.type == pygame.QUIT:
                 self.running = False
 
-            """
-            Burayı şu anlık silmedim, 1 2 3 basınca ekran değişiyor
+            
+           # Burayı şu anlık silmedim, 1 2 3 basınca ekran değişiyor
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_1:
                     self.current_bg = self.bg_level1
@@ -248,20 +262,41 @@ class BattleGame:
                     self.current_bg = self.bg_level2
                 elif event.key == pygame.K_3:
                     self.current_bg = self.bg_level3
-            """
+                elif event.key == pygame.K_SPACE:
+                    self.current_boss.saldir(self.oyuncu)
+                elif event.key == pygame.K_h:
+                    self.oyuncu.celik_firtina(self.current_boss)
+            
 
     def update(self):
-        # Eğer Gyoubu ölürse Bölüm 2ye geç
+        # --- BÖLÜM 1 -> BÖLÜM 2 GEÇİŞİ ---
         if self.current_bg == self.bg_level1 and not self.boss_gyoubu.hayatta_mi():
+            # 1- Mevcut arka plan üzerinde karartma ve zafer yazısı çıkar
+            self.boss_yenildi_ekrani("Gyoubu Oniwa")
+            
+            # 2- Arka planı değiştir
             self.current_bg = self.bg_level2
-            # Bölüm ekranı geçişi
+            
+            # 3- Tamamen siyah sinematik Bölüm Geçiş ekranını göster
             self.bolum_ekrani_goster("BÖLÜM 2: LORDU KURTARMA")
-
-        # Eğer Genichiro öldüyse Bölüm 3e geç
+            
+        # --- BÖLÜM 2 -> BÖLÜM 3 GEÇİŞİ ---
         elif self.current_bg == self.bg_level2 and not self.boss_genichiro.hayatta_mi():
+            # 1- Zafer Ekranı
+            self.boss_yenildi_ekrani("Genichiro Ashina")
+            
+            # 2- Arka Plan Değişimi
             self.current_bg = self.bg_level3
-            # Bölüm ekranı geçişi, evet yine yazdım
+            
+            # 3- Bölüm Geçiş Ekranı
             self.bolum_ekrani_goster("BÖLÜM 3: LORDU ARINDIRMA")
+            
+        # --- OYUN BİTİŞİ (BÖLÜM 3 SONU) ---
+        elif self.current_bg == self.bg_level3 and not self.boss_isshin.hayatta_mi():
+            self.boss_yenildi_ekrani("Isshin Ashina")
+            # Burası şimdilik böyle, belki farklı bir oyun sonu yaparım, yazı yerine
+            self.bolum_ekrani_goster("TEBRİKLER, OYUNU TAMAMLADINIZ!")
+            self.running = False
 
     def draw_health_bars(self):
         """Ekranın üst kısmına oyuncu ve boss can barlarını çizer."""

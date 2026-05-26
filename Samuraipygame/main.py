@@ -30,7 +30,7 @@ def main():
         secilen_isim = input_screen.run() # Oyuncunun girdiği adı veya Samurai ismini döndürür
 
         # Oyunu, seçilen isimle başlatıyoruz
-        game = BattleGame(oyuncu_adi = secilen_isim)
+        game = BattleGame(screen = screen, oyuncu_adi = secilen_isim)
         game.run()
     else:
         pygame.quit()

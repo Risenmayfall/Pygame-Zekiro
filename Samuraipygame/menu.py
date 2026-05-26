@@ -66,12 +66,11 @@ class MainMenu:
                 if event.type == pygame.QUIT:
                     return "QUIT"
                 
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                        if self.btn_play_rect.collidepoint(event.pos):
-                            return "PLAY"
-                        elif self.btn_quit_rect.collidepoint(event.pos):
-                            return "QUIT"
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    if self.btn_play_rect.collidepoint(event.pos):
+                        return "PLAY"
+                    elif self.btn_quit_rect.collidepoint(event.pos):
+                        return "QUIT"
             
             self.draw()
 
