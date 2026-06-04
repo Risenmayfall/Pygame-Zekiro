@@ -66,7 +66,8 @@ class CharView:
     def __init__(self, karakter: Chars, img_normal_path: str, img_attack_path: str, img_damage_path: str, pos: pygame.Vector2):
         self.karakter = karakter
         self.pos = pos
-        self.base_x = pos.x
+        self.base_x = pos.x # Orijinal konum (geri döneceği yer)
+        self.target_x = pos.x # Anlık gitmek istediği yer
         self.alive = True
 
         try:
@@ -84,6 +85,7 @@ class CharView:
         # Aktif durum ve zamanlayıcılar
         self.current_state = "normal"
         self.state_timer = 0 # Özel durumların ekranda kalma süresi
+        self.dash_speed = 20 # Karakterlerin kayma hızı
     
     @property
     def image(self) -> pygame.Surface:
@@ -95,13 +97,17 @@ class CharView:
         return self.image.get_rect(center=(int(self.pos.x), int(self.pos.y)))
     
     def trigger_state(self, new_state: str, duration: int = 500, dash_offset: int = 0):
-        """Karakterin durumunu değiştirir (Örnek attack yapar ve 500ms sonra normale döndürür)"""
+        """Karakterin durumunu değiştirir (Örnek attack yapar ve 500ms sonra normale döndürür)
+            Ayrıca gitmesi istenilen konumu belirler
+        """
         self.current_state = new_state
         self.state_timer = pygame.time.get_ticks() + duration
 
         # Eğer karakter saldırı durumuna geçtiyse x konumunu ileri kaydır
         if new_state == "attack":
             self.pos.x = self.base_x + dash_offset
+        else:
+            self.target_x = self.base_x
 
     def update_animation(self):
         """Saldırı veya hasar görselinin süresi bittiyse otomatik normale döndürür"""
@@ -109,6 +115,13 @@ class CharView:
             if pygame.time.get_ticks() > self.state_timer:
                 self.current_state = "normal"
                 self.pos.x = self.base_x  # Karakteri orijinal pozisyonuna geri getirir.
+        
+        if self.pos.x < self.target_x:
+            # Sağa doğru kayma
+            self.pos.x = min(self.target_x, self.pos.x + self.dash_speed)
+        elif self.pos.x > self.target_x:
+            # Sola doğru kayma
+            self.pos.x = max(self.target_x, self.pos.x - self.dash_speed)
 
     def draw(self, screen: pygame.Surface, font: pygame.font.Font, highlight: bool = False, scale: float = 1.0):
         if not self.alive or self.karakter.can <= 0:
