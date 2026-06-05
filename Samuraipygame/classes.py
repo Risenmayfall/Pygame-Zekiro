@@ -85,7 +85,7 @@ class CharView:
         # Aktif durum ve zamanlayıcılar
         self.current_state = "normal"
         self.state_timer = 0 # Özel durumların ekranda kalma süresi
-        self.dash_speed = 20 # Karakterlerin kayma hızı
+        self.dash_speed = 10 # Karakterlerin kayma hızı
     
     @property
     def image(self) -> pygame.Surface:
@@ -216,12 +216,33 @@ class BattleGame:
         self.title_card_font = pygame.font.SysFont("Times New Roman", 72, bold=True)
         self.victory_font = pygame.font.SysFont("Georgia", 90, bold = True)
 
-
         # Arka plan tanımlama
         self.bg_level1 = Background1(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
         self.bg_level2 = Background2(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
         self.bg_level3 = Background3(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
         self.current_bg = self.bg_level1
+
+        # Ses efektleri
+        try:
+            self.snd_player_attack = pygame.mixer.Sound("Sounds/Sekiro_attack.mp3")
+            self.snd_boss_attack = pygame.mixer.Sound("Sounds/Boss_attack.mp3")
+            self.snd_victory = pygame.mixer.Sound("Sounds/Victory.mp3")
+            self.snd_defeat = pygame.mixer.Sound("Sounds/Death.mp3")
+
+            # Ses seviyelerini ayarlayabileceğimiz yer ( 0 - 1 arasında )
+            self.snd_player_attack.set_volume(0.6)
+            self.snd_boss_attack.set_volume(0.8)
+            self.snd_victory.set_volume(0.8)
+            self.snd_defeat.set_volume(0.8)
+        except pygame.error as e:
+            print("Ses efektleri yüklenirken hata oluştu!")
+            print("Hata detayı: ", e)
+        
+        self.level_musics = {
+            self.bg_level1: "Sounds/Gyoubu_soundtrack.mp3",
+            self.bg_level2: "Sounds/Genichiro_soundtrack.mp3",
+            self.bg_level3: "Sounds/Isshin_soundtrack.mp3"
+        }
 
         # Karakterlerin oluşturulması
         self.oyuncu = Samurai(oyuncu_adi, can = 100, guc = 20, kalkan = 5)
@@ -259,7 +280,17 @@ class BattleGame:
 
         self.running = True
 
+        self.muzik_cal(self.current_bg)
         self.bolum_ekrani_goster("BÖLÜM 1: KALEYE GİRİŞ")
+
+    def muzik_cal(self, bg_level):
+        """Verilen bölüme ait arka plan müziğini çalar ve loopa alır"""
+        try:
+            pygame.mixer.music.load(self.level_musics[bg_level])
+            pygame.mixer.music.set_volume(0.4)
+            pygame.mixer.music.play(-1)
+        except:
+            print(f"Müzik dosyası yüklenemedi: {self.level_musics[bg_level]}")
     
     def boss_yenildi_ekrani(self, boss_ismi: str):
         """Mevcut ekranı hafifçe karartır, 'Düşman yenildi' yazar ve 3 saniye bekler"""
@@ -332,6 +363,8 @@ class BattleGame:
                 # Space ile boss bize saldırır (Bu şu an deneme amaçlı, ileride soru cevap tabanlı bir oyun)
                 if event.key == pygame.K_SPACE:
                     self.current_boss.saldir(self.oyuncu)
+                    # Saldırı sesi
+                    self.snd_boss_attack.play()
                     # Görsel tetiklemeler: Boss saldırıyor, oyuncu hasar alıyor
                     self.current_boss_view.trigger_state("attack", duration=400, dash_offset=-580) # Dashoffset karakterlerin birbirine hareket etmesi için girdiğimiz - veya + parametre
                     self.oyuncu_view.trigger_state("damage", duration=400)
@@ -339,19 +372,32 @@ class BattleGame:
                 # H tuşu ile oyuncu saldırır
                 elif event.key == pygame.K_h:
                     self.oyuncu.celik_firtina(self.current_boss)
+                    # Saldırı sesi
+                    self.snd_player_attack.play()
                     #Görsel tetiklemeler: Oyuncu saldırıyor, boss hasar alıyor
                     self.oyuncu_view.trigger_state("attack", duration=400, dash_offset=580)
                     self.current_boss_view.trigger_state("damage", duration=400)
             
 
     def update(self):
+        # --- OYUNCUNUN CANLI OLUP OLMADIĞINI KONTROL EDER ---
+        if not self.oyuncu.hayatta_mi():
+            pygame.mixer.music.stop()
+            self.snd_defeat.play()
+            self.bolum_ekrani_goster("DEATH")
+            self.running = False
+            return
+        
         # --- BÖLÜM 1 -> BÖLÜM 2 GEÇİŞİ ---
         if self.current_bg == self.bg_level1 and not self.boss_gyoubu.hayatta_mi():
             # 1- Mevcut arka plan üzerinde karartma ve zafer yazısı çıkar
+            pygame.mixer.music.stop()
+            self.snd_victory.play()
             self.boss_yenildi_ekrani("Gyoubu Oniwa")
             
             # 2- Arka planı değiştir
             self.current_bg = self.bg_level2
+            self.muzik_cal(self.current_bg)
             
             # 3- Tamamen siyah sinematik Bölüm Geçiş ekranını göster
             self.bolum_ekrani_goster("BÖLÜM 2: LORDU KURTARMA")
@@ -359,16 +405,21 @@ class BattleGame:
         # --- BÖLÜM 2 -> BÖLÜM 3 GEÇİŞİ ---
         elif self.current_bg == self.bg_level2 and not self.boss_genichiro.hayatta_mi():
             # 1- Zafer Ekranı
+            pygame.mixer.music.stop()
+            self.snd_victory.play()
             self.boss_yenildi_ekrani("Genichiro Ashina")
             
             # 2- Arka Plan Değişimi
             self.current_bg = self.bg_level3
+            self.muzik_cal(self.current_bg)
             
             # 3- Bölüm Geçiş Ekranı
             self.bolum_ekrani_goster("BÖLÜM 3: LORDU ARINDIRMA")
             
         # --- OYUN BİTİŞİ (BÖLÜM 3 SONU) ---
         elif self.current_bg == self.bg_level3 and not self.boss_isshin.hayatta_mi():
+            pygame.mixer.music.stop()
+            self.snd_victory.play()
             self.boss_yenildi_ekrani("Isshin Ashina")
             # Burası şimdilik böyle, belki farklı bir oyun sonu yaparım, yazı yerine
             self.bolum_ekrani_goster("TEBRİKLER, OYUNU TAMAMLADINIZ!")
