@@ -1,7 +1,15 @@
 import sys
 import pygame
+import json
 from dataclasses import dataclass
+import random
 from PIL import Image, ImageSequence
+
+@dataclass
+class Soru:
+    soru_metni: str
+    secenekler: list[str]
+    dogru_cevap_index: int
 
 # Genel class
 class Chars:
@@ -35,21 +43,21 @@ class Samurai(Chars):
 # Bosses
 class Gyoubu(Chars):
     def savas_baltasi(self, dusman: Chars) -> int:
-        ham = self.guc * 1.33
+        ham = self.guc * 1.10
         net = self._hasar_hesapla(ham)
         dusman.can = max(0,dusman.can - net)
         return net
     
 class Genichiro(Chars):
     def yildirim_katana(self, dusman: Chars) -> int:
-        ham = self.guc * 1.66
+        ham = self.guc * 1.25
         net = self._hasar_hesapla(ham)
         dusman.can = max(0,dusman.can - net)
         return net
     
 class Isshin(Chars):
     def mizrak_sarj(self, dusman: Chars) -> int:
-        ham = self.guc * 2
+        ham = self.guc * 1.5
         net = self._hasar_hesapla(ham)
         dusman.can = max(0,dusman.can - net)
         return net
@@ -151,7 +159,7 @@ class CharView:
 class Background1:
     def __init__(self, screen_width, screen_height):
         try:
-            self.image = pygame.image.load("Images\Arkaplan\Gyoubuarkaplan.png").convert()
+            self.image = pygame.image.load("Images/Arkaplan/Gyoubuarkaplan.png").convert()
             self.image = pygame.transform.scale(self.image, (screen_width, screen_height))
         except pygame.error as e:
             print("Görseller yüklenirken hata oluştu! Lütfen dosyaları kontrol ediniz.")
@@ -168,7 +176,7 @@ class Background1:
 class Background2:
     def __init__(self, screen_width, screen_height):
         try:
-            self.image = pygame.image.load("Images\Arkaplan\Genichiroarkaplan.png").convert()
+            self.image = pygame.image.load("Images/Arkaplan/Genichiroarkaplan.png").convert()
             self.image = pygame.transform.scale(self.image, (screen_width, screen_height))
         except pygame.error as e:
             print("Görseller yüklenirken hata oluştu! Lütfen dosyaları kontrol ediniz.")
@@ -185,7 +193,7 @@ class Background2:
 class Background3:
     def __init__(self, screen_width, screen_height):
         try:
-            self.image = pygame.image.load("Images\Arkaplan\Isshinarkaplan.png").convert()
+            self.image = pygame.image.load("Images/Arkaplan/Isshinarkaplan.png").convert()
             self.image = pygame.transform.scale(self.image, (screen_width, screen_height))
         except pygame.error as e:
             print("Görseller yüklenirken hata oluştu! Lütfen dosyaları kontrol ediniz.")
@@ -202,6 +210,7 @@ class BattleGame:
     def __init__(self, screen, oyuncu_adi: str = "Samurai"):
         # Pygame start
         pygame.init()
+        pygame.mixer.init()
 
         # Pencere boyutu ayarları
         self.SCREEN_WIDTH = 1500
@@ -213,6 +222,7 @@ class BattleGame:
         self.clock = pygame.time.Clock()
         self.font = pygame.font.SysFont("ATC Laurel Black", 50, bold = True)
         self.hp_font = pygame.font.SysFont("Arial", 23, bold = True)
+        self.soru_font = pygame.font.SysFont("Arial", 28, bold=True)
         self.title_card_font = pygame.font.SysFont("Times New Roman", 72, bold=True)
         self.victory_font = pygame.font.SysFont("Georgia", 90, bold = True)
 
@@ -280,8 +290,59 @@ class BattleGame:
 
         self.running = True
 
+        self.soru_havuzu = self.json_soru_yukle("sorular.json")
+        self.soru_bekleniyor = False
+        
+        # Havuzu karıştırarak ilk indexten itibaren soruları oyuncuya yönlendiriyoruz
+        random.shuffle(self.soru_havuzu)
+        self.aktif_soru_index = 0
+        self.mevcut_soru = self.soru_havuzu[self.aktif_soru_index]
+
+        # Buton konumları
+        self.butonlar = []
+        bx, by, bw, bh = 180, 610, 500, 60
+        self.butonlar.append(pygame.Rect(bx, by, bw, bh)) # A şıkkı
+        self.butonlar.append(pygame.Rect(bx + 620, by, bw, bh)) # B
+        self.butonlar.append(pygame.Rect(bx, by + 80, bw, bh)) # C
+        self.butonlar.append(pygame.Rect(bx + 620, by + 80, bw, bh)) # D
+
         self.muzik_cal(self.current_bg)
         self.bolum_ekrani_goster("BÖLÜM 1: KALEYE GİRİŞ")
+
+    def yeni_soru_gec(self):
+        """Soru cevaplandıktan sonra yeni soruya geçer."""
+        self.aktif_soru_index += 1
+        # Eğer havuz bittiyse soruları tekrar karıştırıp sıfırla
+        if self.aktif_soru_index >= len(self.soru_havuzu):
+            random.shuffle(self.soru_havuzu)
+            self.aktif_soru_index = 0
+        self.mevcut_soru = self.soru_havuzu[self.aktif_soru_index]
+
+    def json_soru_yukle(self, dosya_yolu: str) -> list[Soru]:
+        """TAMAMEN AI, Çünkü JSON ilk defa kullanıyorum"""
+        """JSON dosyasını okur ve içindeki verileri Soru nesnelerine dönüştürür."""
+        gecici_havuz = []
+        try:
+            with open(dosya_yolu, "r", encoding="utf-8") as f:
+                soru_listesi = json.load(f) # JSON'ı Python listesine çevirir
+
+                # Her bir sözlüğü (dict) bizim yazdığımız Soru veri modeline çeviriyoruz
+                for s in soru_listesi:
+                    yeni_soru = Soru(
+                        soru_metni= s["soru_metni"],
+                        secenekler= s["secenekler"],
+                        dogru_cevap_index= s["dogru_cevap_index"]
+                    )
+                    gecici_havuz.append(yeni_soru)
+        except FileNotFoundError:
+            print(f"HATA: '{dosya_yolu}' dosyası bulunamadı! Lütfen dosya adını kontrol edin.")
+            # Eğer dosya yoksa oyun çökmesin diye yedek bir soru oluşturuyoruz
+            gecici_havuz.append(Soru("Yedek Soru: JSON dosyası yüklenemedi?", ["A", "B", "C", "D"], 0))
+        except json.JSONDecodeError:
+            print(f"HATA: '{dosya_yolu}' dosyasının JSON formatında bir yazım hatası var (Virgül veya parantez eksik olabilir)!")
+            gecici_havuz.append(Soru("Yedek Soru: JSON format hatası?", ["A", "B", "C", "D"], 0))
+            
+        return gecici_havuz
 
     def muzik_cal(self, bg_level):
         """Verilen bölüme ait arka plan müziğini çalar ve loopa alır"""
@@ -359,27 +420,102 @@ class BattleGame:
             if event.type == pygame.QUIT:
                 self.running = False
 
-            if event.type == pygame.KEYDOWN:
-                # Space ile boss bize saldırır (Bu şu an deneme amaçlı, ileride soru cevap tabanlı bir oyun)
-                if event.key == pygame.K_SPACE:
-                    self.current_boss.saldir(self.oyuncu)
-                    # Saldırı sesi
-                    self.snd_boss_attack.play()
-                    # Görsel tetiklemeler: Boss saldırıyor, oyuncu hasar alıyor
-                    self.current_boss_view.trigger_state("attack", duration=400, dash_offset=-580) # Dashoffset karakterlerin birbirine hareket etmesi için girdiğimiz - veya + parametre
-                    self.oyuncu_view.trigger_state("damage", duration=400)
+            # Tıklama kontrolü
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if self.mevcut_soru is None or self.soru_bekleniyor:
+                    continue # Döngünün başına dön, hiçbir işlem yapma
 
-                # H tuşu ile oyuncu saldırır
-                elif event.key == pygame.K_h:
-                    self.oyuncu.celik_firtina(self.current_boss)
-                    # Saldırı sesi
-                    self.snd_player_attack.play()
-                    #Görsel tetiklemeler: Oyuncu saldırıyor, boss hasar alıyor
-                    self.oyuncu_view.trigger_state("attack", duration=400, dash_offset=580)
-                    self.current_boss_view.trigger_state("damage", duration=400)
+                mouse_pos = event.pos
+                # 4 butondan hangisine tıkladığını kontrol et
+                for i, buton in enumerate(self.butonlar):
+                    if buton.collidepoint(mouse_pos):
+                        self.cevap_kontrol_et(secilen_index=i)
+                        return
+
+    def cevap_kontrol_et(self, secilen_index: int):
+        """Cevabı kontrol eder, hasar mekanizmalarını ve animasyonlarını tetikler."""
+        dogru_mu = (secilen_index == self.mevcut_soru.dogru_cevap_index)
+        self.mevcut_soru = None
+
+        self.cevap_bildirim_ekrani_goster(dogru_mu)
+
+        if dogru_mu:
+            # Doğru cevap aksiyonu
+            self.oyuncu.celik_firtina(self.current_boss)
+            self.snd_player_attack.play()
+
+            # Atılma animasyonu
+            self.oyuncu_view.trigger_state("attack", duration=450, dash_offset=580)
+            self.current_boss_view.trigger_state("damage", duration=450)
+        else: 
+            if self.current_bg == self.bg_level1:
+                self.boss_gyoubu.savas_baltasi(self.oyuncu)
+            elif self.current_bg == self.bg_level2:
+                self.boss_genichiro.yildirim_katana(self.oyuncu)
+            elif self.current_bg == self.bg_level3:
+                self.boss_isshin.mizrak_sarj(self.oyuncu)
             
+            self.snd_boss_attack.play()
+            self.current_boss_view.trigger_state("attack", duration=450, dash_offset=-580)
+            self.oyuncu_view.trigger_state("damage", duration=450)
+
+        # Savaş algoritması çalıştıktan sonra yeni soruya geç
+        self.soru_bekleniyor = True
+    
+    def cevap_bildirim_ekrani_goster(self, dogru_mu: bool):
+        """Soru kaybolduktan sonra ekrana cevap çıkar"""
+
+        # 1. Arka planı hafif karartmak için transparan yüzey
+        karartma_yuzeyi = pygame.Surface((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), pygame.SRCALPHA)
+        karartma_yuzeyi.fill((0, 0, 0, 120)) # Hafif bir karartma
+        
+        # 2. Soru ve şıklar kalkmış haliyle ekranı bir kez temiz çizdiriyoruz
+        self.current_bg.draw(self.screen)
+        self.oyuncu_view.draw(self.screen, self.hp_font, scale= 1.2)
+        if self.current_boss == self.boss_isshin:
+            self.current_boss_view.draw(self.screen, self.hp_font, scale=1.5)
+        elif self.current_boss == self.boss_genichiro:
+            self.current_boss_view.draw(self.screen, self.hp_font, scale=1.2)
+        else:
+            self.current_boss_view.draw(self.screen, self.hp_font, scale=1.0)
+        self.draw_health_bars()
+        
+        # Karartmayı ekrana ser
+        self.screen.blit(karartma_yuzeyi, (0, 0))
+        
+        # 3. Duruma göre Renk ve Metin Belirleme
+        if dogru_mu:
+            şerit_rengi = (0, 120, 50)     # Koyu Yeşil Şerit
+            metin_rengi = (150, 255, 150)  # Açık Yeşil Yazı
+            durum_metni = "DOĞRU"
+        else:
+            şerit_rengi = (150, 0, 0)      # Koyu Kırmızı Şerit
+            metin_rengi = (255, 150, 150)  # Açık Kırmızı Yazı
+            durum_metni = "YANLIŞ"
+            
+        # 4. Sinematik yatay bandı çiz (Ekranın tam ortasına)
+        pygame.draw.rect(self.screen, şerit_rengi, (0, self.SCREEN_HEIGHT // 2 - 60, self.SCREEN_WIDTH, 120))
+        
+        # 5. Yazıyı bas
+        bildirim_surface = self.victory_font.render(durum_metni, True, metin_rengi)
+        bildirim_rect = bildirim_surface.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2))
+        self.screen.blit(bildirim_surface, bildirim_rect)
+        
+        # 6. Ekranı güncelle ve 1.2 saniye (1200 milisaniye) ekranda tut
+        pygame.display.flip()
+        pygame.event.clear()
+        pygame.time.delay(1200)
 
     def update(self):
+        # Eğer bir soru cevaplandıysa ve şu an animasyonların bitmesini bekliyorsak
+        if self.soru_bekleniyor:
+            # Oyuncu ve boss konumlarına geri döndü mü ve normal mi?
+            if self.oyuncu_view.current_state == "normal" and self.current_boss_view.current_state == "normal":
+                if self.oyuncu_view.pos.x == self.oyuncu_view.base_x and self.current_boss_view.pos.x == self.current_boss_view.base_x:
+                    # Karakterler tamamen durdu, şimdi yeni soruyu getirebiliriz.
+                    self.yeni_soru_gec()
+                    self.soru_bekleniyor = False # Kilidi aç
+
         # --- OYUNCUNUN CANLI OLUP OLMADIĞINI KONTROL EDER ---
         if not self.oyuncu.hayatta_mi():
             pygame.mixer.music.stop()
@@ -480,7 +616,7 @@ class BattleGame:
         self.screen.blit(text_surface, text_rect)
 
         # 3- Karakterleri çiz
-        self.oyuncu_view.draw(self.screen, self.hp_font)
+        self.oyuncu_view.draw(self.screen, self.hp_font, scale = 1.2)
         if self.current_boss == self.boss_isshin:
             self.current_boss_view.draw(self.screen, self.hp_font, scale = 1.5)
         elif self.current_boss == self.boss_genichiro:
@@ -491,7 +627,39 @@ class BattleGame:
         # 4- Can barlarını çiz
         self.draw_health_bars()
 
-        # 5- Ekranı güncelle
+        # 5- Soru paneli
+        if self.mevcut_soru:
+            soru_panel_rect = pygame.Rect(100,150,1300,60)
+            pygame.draw.rect(self.screen, (30,30,30), soru_panel_rect, border_radius=10)
+
+            """Soru metni yazdırma"""
+            soru_text = self.soru_font.render(self.mevcut_soru.soru_metni, True, (255,215,0))
+            soru_rect = soru_text.get_rect(center=soru_panel_rect.center)
+            self.screen.blit(soru_text,soru_rect)
+
+            """Buton çizme"""
+            mouse_pos = pygame.mouse.get_pos()
+            harfler = ["A) ", "B) ", "C) ", "D) "]
+
+            for i, buton in enumerate(self.butonlar):
+                # Hover
+                if buton.collidepoint(mouse_pos):
+                    bg_color = (70,70,70)
+                    text_color = (255,215,0)
+                else:
+                    bg_color = (45,45,45)
+                    text_color = (230,230,230)
+                
+                # Buton kutusunu çiz
+                pygame.draw.rect(self.screen, bg_color, buton, border_radius=8)
+                pygame.draw.rect(self.screen, (100,100,100), buton, 2, border_radius=8)
+
+                sik_metni = harfler[i] + self. mevcut_soru.secenekler[i]
+                sik_surface = self.soru_font.render(sik_metni, True, text_color)
+                sik_rect = sik_surface.get_rect(midleft=(buton.x + 20, buton.centery))
+                self.screen.blit(sik_surface, sik_rect)
+
+        # 6- Ekranı güncelle
         pygame.display.flip()
         
 
