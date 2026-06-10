@@ -1,2 +1,5 @@
 streamlit
 pygame
+"soru_metni": "",
+"secenekler": [],
+"dogru_cevap_index": 

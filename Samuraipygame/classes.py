@@ -537,6 +537,7 @@ class BattleGame:
             
             # 3- Tamamen siyah sinematik Bölüm Geçiş ekranını göster
             self.bolum_ekrani_goster("BÖLÜM 2: LORDU KURTARMA")
+            self.oyuncu.can = 100
             
         # --- BÖLÜM 2 -> BÖLÜM 3 GEÇİŞİ ---
         elif self.current_bg == self.bg_level2 and not self.boss_genichiro.hayatta_mi():
@@ -548,6 +549,7 @@ class BattleGame:
             # 2- Arka Plan Değişimi
             self.current_bg = self.bg_level3
             self.muzik_cal(self.current_bg)
+            self.oyuncu.can = 100
             
             # 3- Bölüm Geçiş Ekranı
             self.bolum_ekrani_goster("BÖLÜM 3: LORDU ARINDIRMA")

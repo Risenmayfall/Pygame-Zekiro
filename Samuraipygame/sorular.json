@@ -73,5 +73,240 @@
         "soru_metni": "Kısa ve düşük içeriklerden oluşan internet postları ne olarak adlandırılır?",
         "secenekler": ["Shitpost", "Caps", "Brainrot", "Shorts"],
         "dogru_cevap_index": 2
+    },
+    {
+        "soru_metni": "CS:GO oyununda kaç farklı çeşit tabanca bulunur?",
+        "secenekler": ["7","8","9","10"],
+        "dogru_cevap_index": 3
+    },
+    {
+        "soru_metni": "FIFA'nın ilk mobil versiyonu kaç yılında piyasaya sürülmüştür?",
+        "secenekler": ["2017","2016","2019","2015"],
+        "dogru_cevap_index": 1
+    },
+    {
+        "soru_metni": "2014'te yayınlanan League of Legends - Yeni Gün Şafağı sinematiğinde, ilk kanı hangi şampiyon dökmüştür?",
+        "secenekler": ["Draven","Katarina","Riven","Rengar"],
+        "dogru_cevap_index": 3
+    },
+    {
+        "soru_metni": "İlk League of Legends Dünya Şampiyonu olan takım hangisidir?",
+        "secenekler": ["SKT T1","FNATIC","iG","BLG"],
+        "dogru_cevap_index": 1
+    },
+    {
+        "soru_metni": "Espor turnuvalarında en yüksek ödül havuzuna sahip oyun hangisidir?",
+        "secenekler": ["Counter Strike", "DOTA", "League of Legends", "VALORANT"],
+        "dogru_cevap_index": 1
+    },
+    {
+        "soru_metni": "Counter Strike: Global Offensive'deki en nadir bıçak kaplaması hangisidir?",
+        "secenekler": ["Karambit Doppler Phase 3", "Karambit Blue Sapphire", "Karambit Emerald", "Karambit Case Hardened Blue Gem"],
+        "dogru_cevap_index": 3
+    },
+    {
+        "soru_metni": "Tekken'de jaguar maskesi takan karakter hangisidir?",
+        "secenekler": ["Haihachi","Jin","King","Anna"],
+        "dogru_cevap_index": 2
+    },
+    {
+        "soru_metni": "Kratos'un Yunan mitolojisindeki hangi tanrıya karşı intikam alma hikayesi vardır?",
+        "secenekler": ["Zeus","Odin","Hades","Thor"],
+        "dogru_cevap_index": 0
+    },
+    {
+        "soru_metni": "Street Fighter serisindeki hangi karakter, elektriklenmesiyle ünlüdür?",
+        "secenekler": ["Ken", "Akuma", "Blanka", "Blanka"],
+        "dogru_cevap_index": 2
+    },
+    {
+        "soru_metni": "Uluslararası yapılan bir profesyonel League of Legends maçında penta atan ilk Türk oyuncu kimdir?",
+        "secenekler": ["fabFaboulus","Zeitnot", "Stomaged", "Naru"],
+        "dogru_cevap_index": 0
+    },
+    {
+        "soru_metni": "Riot Games'in tasarladığı ilk şampiyon hangisidir?",
+        "secenekler": ["Ashe","Tryndamere","Singed","Sivir"],
+        "dogru_cevap_index": 2
+    },
+    {
+        "soru_metni": "Plants vs. Zombies oyununda patlayarak 3x3 bir alanda zombilere yüksek hasar veren şey nedir?",
+        "secenekler": ["Repeater", "Explode-o-nut", "Chomper", "Cherry Bomb"],
+        "dogru_cevap_index": 3
+    },
+    {
+        "soru_metni": "Doge meme'inde kullanılan ikonik Shiba Inu köpeğinin adı nedir?",
+        "secenekler": ["Kabasu", "Konshu", "Catyn", "Olik"],
+        "dogru_cevap_index": 0
+    },
+    {
+        "soru_metni": "Super Mario Bros. oyunlarında Mario'yu büyük boyuta ulaştıran güçlendiricinin adı nedir?",
+        "secenekler": ["Big mushroom", "Smash Mushroom","Super mushroom","Giant mushroom"],
+        "dogru_cevap_index": 2
+    },
+    {
+        "soru_metni": "Subway Surfers oyununda oyuncunun peşinden kim koşar?",
+        "secenekler": ["Kasap", "Polis", "Hırsız", "Katil"],
+        "dogru_cevap_index": 1
+    },
+    {
+        "soru_metni": "İçinde en fazla seçilebilir karakter bulunan dövüş oyunu serisi hangisidir?",
+        "secenekler": ["Tekken", "Mortal Kombat", "Street Fighter", "Super Smash Brothers"],
+        "dogru_cevap_index": 3
+    },
+    {
+        "soru_metni": "PlayStation'ın ilk modeli hangi yıl piyasaya sürülmüştür?",
+        "secenekler": ["1997","1996","1995","1994"],
+        "dogru_cevap_index": 3
+    },
+    {
+        "soru_metni": "Minecraft'ın ikonik canavarı olan Creeper aslında ne olarak tasarlanmıştı?",
+        "secenekler": ["İnek", "Zombi", "Domuz", "Eşek"],
+        "dogru_cevap_index": 2
+    },
+    {
+        "soru_metni": "Sekiro: Shadows Die Twice oyununda kaç farklı oyun sonu bulunmaktadır?",
+        "secenekler": ["2", "3", "4", "5"],
+        "dogru_cevap_index": 2
+    },
+    {
+        "soru_metni": "Sekiro dirilme gücünü kimden almaktadır?",
+        "secenekler": ["Emma", "Owl", "The Sculptor", "Kuro"],
+        "dogru_cevap_index": 3
+    },
+    {
+        "soru_metni": "Sekiro: Shadows Die Twice oyununda hangi boss da sana mikiri counter uygulayabilir?",
+        "secenekler": ["Isshin", "Genichiro", "Owl", "Emma"],
+        "dogru_cevap_index": 2
+    },
+    {
+        "soru_metni": "Sekiro: Shadows Die Twice oyununda bulunan The Sculptor'ın lakapı hangisidir?",
+        "secenekler": ["Centipede", "Carp", "Orangutan", "Kingfisher"],
+        "dogru_cevap_index": 2
+    },
+    {
+        "soru_metni": "Dark Souls 3 oyununda ilk isteğe bağlı boss hangisidir?",
+        "secenekler": ["Curse-rotted Greatwood", "Old Demon King", "Champion Gundyr", "Gael"],
+        "dogru_cevap_index": 0
+    },
+    {
+        "soru_metni": "Dark Souls 3 oyununda Archdragon Peak'e gitmek için neye ihtiyacınız vardır?",
+        "secenekler": ["The Storm Ruler", "The Coiled Sword", "Dragon Tear", "The 'Path of Dragon' Emote"],
+        "dogru_cevap_index": 3
+    },
+    {
+        "soru_metni": "Dark Souls 3 oyununda Mor efsunlu ve alevli kılıcı bulunan boss hangisidir?",
+        "secenekler": ["Lord of Cinder", "Pontiff Sulyvahn", "High Lord Wolnir", "Dancer of The Boreal Valley"],
+        "dogru_cevap_index": 1
+    },
+    {
+        "soru_metni": "Dark Souls 3 oyununda Nameless King'in birinci aşamasındaki diğer adı nedir?",
+        "secenekler": ["King of the Storm", "Lightning Lord", "Stormbringer", "Blade of The Lightning"],
+        "dogru_cevap_index": 0
+    },
+    {
+        "soru_metni": "Arthur Morgan, hangi çetenin önde gelen üyelerinden biridir?",
+        "secenekler": ["Van der Linde", "Lemoyne", "O'Driscoll", "Del Lobo"],
+        "dogru_cevap_index": 0
+    },
+    {
+        "soru_metni": "Arthur Morgan'ın yakalandığı ölümcül hastalık hangisidir?",
+        "secenekler": ["Tüberkuloz", "Kolera", "Zatürre", "Sıtma"],
+        "dogru_cevap_index": 0
+    },
+    {
+        "soru_metni": "Arthur Morgan'ın çatışma sırasında zamanı yavaşlatarak düşmanlarını hedef almasını sağlayan yeteneğin adı nedir?",
+        "secenekler": ["Bullet Time", "Dead Eye", "Eagle Eye", "Focus Mode"],
+        "dogru_cevap_index": 1
+    },
+    {
+        "soru_metni": "Dutch van der Linde'nin oyun boyunca dilinden düşürmediği ikonik cümlesi hangisidir?",
+        "secenekler": ["Bir planım var!", "Parayı bulduk!", "Silahları hazırlayın!", "Kaçmamız lazım!"],
+        "dogru_cevap_index": 0
+    },
+    {
+        "soru_metni": "Van der Linde çetesinin içindeki en manipülatif, bencil ve oyunun ana kötü karakteri olan kişi kimdir?",
+        "secenekler": ["Javier Escuella", "Bill Williamson", "Micah Bell", "Hosea Matthews"],
+        "dogru_cevap_index": 2
+    },
+    {
+        "soru_metni": "Arthur Morgan'ın oyun boyunca karşılaştığı, onu kovalayan ve yasaları temsil eden federal dedektiflik ajansının adı nedir?",
+        "secenekler": ["Saint Denis Polis Teşkilatı", "Cornwall Petrol Güvenliği", "Pinkerton Ajansı", "FBI"],
+        "dogru_cevap_index": 2
+    },
+    {
+        "soru_metni": "Oyuna adını veren ve Batman'i yakından tanıyan gizemli askeri lider 'Arkham Knight'ın maskesinin altından çıkan gerçek kişi kimdir?",
+        "secenekler": ["Dick Grayson", "Jason Todd", "Azrael (Michael Lane)", "Tim Drake"],
+        "dogru_cevap_index": 1
+    },
+    {
+        "soru_metni": "Beacon yapmak için hangi özel malzeme gerekir?",
+        "secenekler": ["Nether Star","End Crystal","Dragon Egg","Diamond"],
+        "dogru_cevap_index": 0
+    },
+    {
+        "soru_metni": "Bir End Portal'ı etkinleştirmek için kaç adet Efe of Ender gerekir?",
+        "secenekler": ["10","12","14","16"],
+        "dogru_cevap_index": 1
+    },
+    {
+        "soru_metni": "Oyunun başında Razor tarafından elimizden alınan BMW M3 GTR'ın motor tipi nedir?",
+        "secenekler": ["3.6L V6 Turbo", "3.2L Sıralı 6 Silindir", "4.0L V8", "5.0L V10"],
+        "dogru_cevap_index": 2
+    },
+    {
+        "soru_metni": "Most Wanted oyununda bir Blacklist üyesine meydan okumak için hangisini yapmanıza gerek yoktur?",
+        "secenekler": ["Belirli bir ödül miktarına ulaşmak", "Belirlenen sayıda yarış kazanmak", "Tüm yarışları birinci bitirmek", "Belirli sayıda Milestone tamamlamak"],
+        "dogru_cevap_index": 2
+    },
+    {
+        "soru_metni": "NFS: Most Wanted oyununun geçtiği kurgusal şehrin adı nedir?",
+        "secenekler": ["Rockport", "Palmont City", "Fairhaven", "Bayview"],
+        "dogru_cevap_index": 0
+    },
+    {
+        "soru_metni": "Rusty Lake evreninden Mr. Owl karakterinin gerçek insan kimliği hangisidir?",
+        "secenekler": ["William Vanderboom", "Jakob Eilander", "Dale Vandermeer", "Aldous Vanderboom"],
+        "dogru_cevap_index": 1
+    },
+    {
+        "soru_metni": "Rusty lake serisinde mavi küpler neyi simgeler?",
+        "secenekler": ["Saf ve mutlu anları", "Geçmişin değiştirilmesi ve zaman yolculuğu", "Yozlaşmış ruhları", "Geleceği görmeyi"],
+        "dogru_cevap_index": 1
+    },
+    {
+        "soru_metni": "Rusty Lake: Paradise oyunu hangi tarihi/dini olgu üzerine kurulmuştur?",
+        "secenekler": ["Yedi Ölümcül Günah", "Nuh Tufanı", "Dante'nin Cehennemi", "Mısır'ın On Belası"],
+        "dogru_cevap_index": 3
+    },
+    {
+        "soru_metni": "Albert Vanderboom'un yarattığı kızı Rose, William'ı diriltmek için neyini feda etmiştir?",
+        "secenekler": ["Kendi anılarını", "Kendi kanını", "Kendi gözlerini", "Kendi sesini"],
+        "dogru_cevap_index": 1
+    },
+    {
+        "soru_metni": "Hollow Knight oyununda Monomon'un mühürlerini koruyan ve size Uumuu savaşında yardım eden karakter kimdir?",
+        "secenekler": ["Tiso", "Lurien the Watcher", "Quirrel", "Cloth"],
+        "dogru_cevap_index": 2
+    },
+    {
+        "soru_metni": "Deepnest'in derinliklerinde karşımıza çıkan ve görünüşümüzü taklit eden yaratık hangisidir?",
+        "secenekler": ["Stalking Devout", "Collector", "Mimic Grub", "Nosk"],
+        "dogru_cevap_index": 3
+    },
+    {
+        "soru_metni": "Hornet'in macerasının geçtiği ve Silk and Song'un hüküm sürdüğü yeni krallığın adı nedir?",
+        "secenekler": ["Hallownest", "Farloom", "Land of Storms", "Pharloom"],
+        "dogru_cevap_index": 3
+    },
+    {
+        "soru_metni": "Hornet'in en dişli rakibi olarak görülen 'Yaldızlı bir fencer' olarak tanınan karakter hangisidir?",
+        "secenekler": ["Sharpe", "Trobbio", "Seth", "Lace"],
+        "dogru_cevap_index": 3
+    },
+    {
+        "soru_metni": "Hornet'in üstünde istasyonlar arasında seyahat edebildiği devasa yaratığın adı nedir?",
+        "secenekler": ["The Last Stag", "The Bell Beast", "Willoh", "Garmond"],
+        "dogru_cevap_index": 1
     }
 ]
