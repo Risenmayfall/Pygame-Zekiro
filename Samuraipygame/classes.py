@@ -207,7 +207,7 @@ class Background3:
         screen.blit(self.image, (0,0))
 
 class BattleGame:
-    def __init__(self, screen, oyuncu_adi: str = "Samurai"):
+    def __init__(self, screen, oyuncu_adi: str = "Samurai", zorluk_modu: str = "NORMAL"):
         # Pygame start
         pygame.init()
         pygame.mixer.init()
@@ -216,6 +216,7 @@ class BattleGame:
         self.SCREEN_WIDTH = 1500
         self.SCREEN_HEIGHT = 750
         self.screen = screen
+        self.zorluk_modu = zorluk_modu
         pygame.display.set_caption("Zekiro: Shadows Die Once")
 
         # Zamanlayıcı ve font
@@ -308,6 +309,13 @@ class BattleGame:
 
         self.muzik_cal(self.current_bg)
         self.bolum_ekrani_goster("BÖLÜM 1: KALEYE GİRİŞ")
+
+        self.dogru_serisi = 0 # Doğru cevap sayacı
+        self.odul_ekrani_aktif = False # Ödül seçimi açık mı kontrol et
+
+        # Ekranın ortasında yan yana duracak iki büyük kart butonu 
+        self.btn_can_odul = pygame.Rect(self.SCREEN_WIDTH // 2 - 400, self.SCREEN_HEIGHT // 2 - 50, 350, 180)
+        self.btn_hasar_odul = pygame.Rect(self.SCREEN_WIDTH // 2 + 50, self.SCREEN_HEIGHT // 2 - 50, 350, 180)
 
     def yeni_soru_gec(self):
         """Soru cevaplandıktan sonra yeni soruya geçer."""
@@ -422,10 +430,35 @@ class BattleGame:
 
             # Tıklama kontrolü
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                mouse_pos = event.pos
+                if self.odul_ekrani_aktif:
+                    # Kart 1 can yenileme
+                    if self.btn_can_odul.collidepoint(mouse_pos):
+                        yenilenecek_can = self.oyuncu_max_can // 4
+                        self.oyuncu.can = min(self.oyuncu_max_can, self.oyuncu.can + yenilenecek_can)
+
+                        self.odul_ekrani_aktif = False
+                        self.soru_bekleniyor = True
+                        return
+                    
+                    # Kart 2 hasar
+                    elif self.btn_hasar_odul.collidepoint(mouse_pos):
+                        kritik_hasar = int(self.oyuncu.guc * 1.5)
+
+                        self.current_boss.can -= kritik_hasar
+                        
+                        # Görsel ve ses
+                        self.snd_player_attack.play()
+                        self.oyuncu_view.trigger_state("attack", duration=450, dash_offset=580)
+                        self.current_boss_view.trigger_state("damage", duration=450)
+
+                        self.odul_ekrani_aktif = False
+                        self.soru_bekleniyor = True
+                        return
+                    continue
+
                 if self.mevcut_soru is None or self.soru_bekleniyor:
                     continue # Döngünün başına dön, hiçbir işlem yapma
-
-                mouse_pos = event.pos
                 # 4 butondan hangisine tıkladığını kontrol et
                 for i, buton in enumerate(self.butonlar):
                     if buton.collidepoint(mouse_pos):
@@ -440,6 +473,7 @@ class BattleGame:
         self.cevap_bildirim_ekrani_goster(dogru_mu)
 
         if dogru_mu:
+            self.dogru_serisi += 1
             # Doğru cevap aksiyonu
             self.oyuncu.celik_firtina(self.current_boss)
             self.snd_player_attack.play()
@@ -447,7 +481,15 @@ class BattleGame:
             # Atılma animasyonu
             self.oyuncu_view.trigger_state("attack", duration=450, dash_offset=580)
             self.current_boss_view.trigger_state("damage", duration=450)
+
+            # 3 DOĞRUYA ULAŞILDI MI
+            if self.dogru_serisi == 3:
+                self.odul_ekrani_aktif = True
+                self.dogru_serisi = 0
+
         else: 
+            self.dogru_serisi = 0
+
             if self.current_bg == self.bg_level1:
                 self.boss_gyoubu.savas_baltasi(self.oyuncu)
             elif self.current_bg == self.bg_level2:
@@ -460,7 +502,8 @@ class BattleGame:
             self.oyuncu_view.trigger_state("damage", duration=450)
 
         # Savaş algoritması çalıştıktan sonra yeni soruya geç
-        self.soru_bekleniyor = True
+        if not self.odul_ekrani_aktif:
+            self.soru_bekleniyor = True
     
     def cevap_bildirim_ekrani_goster(self, dogru_mu: bool):
         """Soru kaybolduktan sonra ekrana cevap çıkar"""
@@ -508,7 +551,7 @@ class BattleGame:
 
     def update(self):
         # Eğer bir soru cevaplandıysa ve şu an animasyonların bitmesini bekliyorsak
-        if self.soru_bekleniyor:
+        if self.soru_bekleniyor and not self.odul_ekrani_aktif:
             # Oyuncu ve boss konumlarına geri döndü mü ve normal mi?
             if self.oyuncu_view.current_state == "normal" and self.current_boss_view.current_state == "normal":
                 if self.oyuncu_view.pos.x == self.oyuncu_view.base_x and self.current_boss_view.pos.x == self.current_boss_view.base_x:
@@ -530,6 +573,9 @@ class BattleGame:
             pygame.mixer.music.stop()
             self.snd_victory.play()
             self.boss_yenildi_ekrani("Gyoubu Oniwa")
+
+            if self.zorluk_modu == "NORMAL":
+                self.oyuncu.can = self.oyuncu_max_can
             
             # 2- Arka planı değiştir
             self.current_bg = self.bg_level2
@@ -537,7 +583,6 @@ class BattleGame:
             
             # 3- Tamamen siyah sinematik Bölüm Geçiş ekranını göster
             self.bolum_ekrani_goster("BÖLÜM 2: LORDU KURTARMA")
-            self.oyuncu.can = 100
             
         # --- BÖLÜM 2 -> BÖLÜM 3 GEÇİŞİ ---
         elif self.current_bg == self.bg_level2 and not self.boss_genichiro.hayatta_mi():
@@ -545,6 +590,9 @@ class BattleGame:
             pygame.mixer.music.stop()
             self.snd_victory.play()
             self.boss_yenildi_ekrani("Genichiro Ashina")
+
+            if self.zorluk_modu == "NORMAL":
+                self.oyuncu.can = self.oyuncu_max_can
             
             # 2- Arka Plan Değişimi
             self.current_bg = self.bg_level3
@@ -559,6 +607,10 @@ class BattleGame:
             pygame.mixer.music.stop()
             self.snd_victory.play()
             self.boss_yenildi_ekrani("Isshin Ashina")
+
+            if self.zorluk_modu == "NORMAL":
+                self.oyuncu.can = self.oyuncu_max_can
+
             # Burası şimdilik böyle, belki farklı bir oyun sonu yaparım, yazı yerine
             self.bolum_ekrani_goster("TEBRİKLER, OYUNU TAMAMLADINIZ!")
             self.running = False
@@ -628,9 +680,49 @@ class BattleGame:
 
         # 4- Can barlarını çiz
         self.draw_health_bars()
+        if self.odul_ekrani_aktif:
+            karartma = pygame.Surface((self.SCREEN_WIDTH, self.SCREEN_HEIGHT), pygame.SRCALPHA)
+            karartma.fill((0,0,0,100))
+            self.screen.blit(karartma,(0,0))
+
+            mouse_pos = pygame.mouse.get_pos()
+            card_title_font = pygame.font.SysFont("Arial", 26, bold=True)
+            card_desc_font = pygame.font.SysFont("Arial", 18)
+
+            # Can kart çizimi
+            if self.btn_can_odul.collidepoint(mouse_pos):
+                c_bg, c_border = (30,55,35), (0,230,100) # Yeşil hover
+            else:
+                c_bg, c_border = (40,40,40), (150,150,150)
+
+            pygame.draw.rect(self.screen, c_bg, self.btn_can_odul, border_radius=15)
+            pygame.draw.rect(self.screen, c_border, self.btn_can_odul,3, border_radius=15)
+
+            t1 = card_title_font.render("ŞİFA KARTINI SEÇ", True, (0,255,120))
+            d1 = card_desc_font.render("Maksimum canınızın %25'ini", True, (220,220,220))
+            d1_2 = card_desc_font.render("anında yeniler.", True, (220,220,220))
+            self.screen.blit(t1, t1.get_rect(center=(self.btn_can_odul.centerx, self.btn_can_odul.y + 40)))
+            self.screen.blit(d1, d1.get_rect(center=(self.btn_can_odul.centerx, self.btn_can_odul.y + 90)))
+            self.screen.blit(d1_2, d1_2.get_rect(center=(self.btn_can_odul.centerx, self.btn_can_odul.y + 120)))
+
+            # Hasar kart çizimi
+            if self.btn_hasar_odul.collidepoint(mouse_pos):
+                h_bg, h_border = (60,35,35), (255,60,60) # Kırmızı hover
+            else:
+                h_bg, h_border = (40,40,40), (150,150,150)
+            
+            pygame.draw.rect(self.screen, h_bg, self.btn_hasar_odul, border_radius=15)
+            pygame.draw.rect(self.screen, h_border, self.btn_hasar_odul, 3, border_radius=15)
+
+            t2 = card_title_font.render("ÖFKE KARTINI SEÇ", True, (255,100,100))
+            d2 = card_desc_font.render("Boss'a anlık olarak gücünüzün", True, (220,220,220))
+            d2_2 = card_desc_font.render("1.5 katı hasar vurur.", True, (220,220,220))
+            self.screen.blit(t2, t2.get_rect(center=(self.btn_hasar_odul.centerx, self.btn_hasar_odul.y + 40)))
+            self.screen.blit(d2, d2.get_rect(center=(self.btn_hasar_odul.centerx, self.btn_hasar_odul.y + 90)))
+            self.screen.blit(d2_2, d2_2.get_rect(center=(self.btn_hasar_odul.centerx, self.btn_hasar_odul.y + 120)))
 
         # 5- Soru paneli
-        if self.mevcut_soru:
+        elif self.mevcut_soru:
             soru_panel_rect = pygame.Rect(100,150,1300,60)
             pygame.draw.rect(self.screen, (30,30,30), soru_panel_rect, border_radius=10)
 

@@ -3,7 +3,7 @@ import pygame
 from dataclasses import dataclass
 from PIL import Image, ImageSequence
 from classes import BattleGame
-from menu import MainMenu, NameInputScreen
+from menu import MainMenu, NameInputScreen, DifficultySelectionScreen
 
 def main():
     pygame.init()
@@ -29,8 +29,12 @@ def main():
         input_screen = NameInputScreen(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
         secilen_isim = input_screen.run() # Oyuncunun girdiği adı veya Samurai ismini döndürür
 
+        # Zorluk derecesi seçme ekranı
+        diff_screen = DifficultySelectionScreen(screen, SCREEN_WIDTH, SCREEN_HEIGHT)
+        secilen_zorluk = diff_screen.run()
+
         # Oyunu, seçilen isimle başlatıyoruz
-        game = BattleGame(screen = screen, oyuncu_adi = secilen_isim)
+        game = BattleGame(screen = screen, oyuncu_adi = secilen_isim, zorluk_modu = secilen_zorluk)
         game.run()
     else:
         pygame.quit()

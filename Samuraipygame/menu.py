@@ -8,7 +8,7 @@ class MainMenu:
         self.SCREEN_HEIGHT = screen_height
 
         try:
-            self.bg_image = pygame.image.load("Images\Arkaplan\ZekiroShadowsDieOnce2.png").convert()
+            self.bg_image = pygame.image.load("Images/Arkaplan/ZekiroShadowsDieOnce2.png").convert()
             self.bg_image = pygame.transform.scale(self.bg_image, (self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         except pygame.error as e:
             print("Başlangıç arka plan görseli yüklenirken hata oluştu!")
@@ -163,4 +163,85 @@ class NameInputScreen:
                                 else:
                                     self.player_name += key_name
             
+            self.draw()
+
+class DifficultySelectionScreen:
+    def __init__(self, screen, screen_width, screen_height):
+        self.screen = screen
+        self.SCREEN_WIDTH = screen_width
+        self.SCREEN_HEIGHT = screen_height
+
+        # Yazı tipleri ve Renkler
+        self.title_font = pygame.font.SysFont("Arial", 45, bold=True)
+        self.btn_font = pygame.font.SysFont("Arial", 36, bold=True)
+        self.desc_font = pygame.font.SysFont("Arial", 20, italic=True)
+        
+        self.COLOR_NORMAL = (200, 200, 200)
+        self.COLOR_HOVER_NORMAL = (0, 180, 70)   # Normal mod için yeşil hover
+        self.COLOR_HOVER_HARD = (180, 0, 0)      # Zorlayıcı mod için kırmızı hover
+
+        # Buton Alanları (Yan yana iki büyük kutu)
+        self.btn_normal_rect = pygame.Rect(self.SCREEN_WIDTH // 2 - 350, self.SCREEN_HEIGHT // 2 - 50, 300, 100)
+        self.btn_hard_rect = pygame.Rect(self.SCREEN_WIDTH // 2 + 50, self.SCREEN_HEIGHT // 2 - 50, 300, 100)
+
+    def draw(self):
+        self.screen.fill((20, 20, 20))
+        mouse_pos = pygame.mouse.get_pos()
+
+        # 1- Başlık metni
+        title_text = self.title_font.render("ZORLUK DERECESİ SEÇİN", True, (255, 215, 0))
+        title_rect = title_text.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2 - 150))
+        self.screen.blit(title_text, title_rect)
+
+        # 2- NORMAL MOD BUTONU
+        if self.btn_normal_rect.collidepoint(mouse_pos):
+            n_bg = (40, 60, 40)
+            n_text_color = self.COLOR_HOVER_NORMAL
+        else:
+            n_bg = (30, 30, 30)
+            n_text_color = self.COLOR_NORMAL
+            
+        pygame.draw.rect(self.screen, n_bg, self.btn_normal_rect, border_radius=12)
+        pygame.draw.rect(self.screen, n_text_color, self.btn_normal_rect, 3, border_radius=12)
+        
+        n_text = self.btn_font.render("NORMAL", True, n_text_color)
+        self.screen.blit(n_text, n_text.get_rect(center=self.btn_normal_rect.center))
+
+        # Normal Mod Açıklaması
+        n_desc = self.desc_font.render("Her yeni bölümde canınız tamamen yenilenir.", True, (30,55,35))
+        self.screen.blit(n_desc, n_desc.get_rect(center=(self.btn_normal_rect.centerx - 10, self.btn_normal_rect.bottom + 30)))
+
+        # 3- ZORLAYICI MOD BUTONU
+        if self.btn_hard_rect.collidepoint(mouse_pos):
+            h_bg = (60, 40, 40)
+            h_text_color = self.COLOR_HOVER_HARD
+        else:
+            h_bg = (30, 30, 30)
+            h_text_color = self.COLOR_NORMAL
+            
+        pygame.draw.rect(self.screen, h_bg, self.btn_hard_rect, border_radius=12)
+        pygame.draw.rect(self.screen, h_text_color, self.btn_hard_rect, 3, border_radius=12)
+        
+        h_text = self.btn_font.render("ZORLAYICI", True, h_text_color)
+        self.screen.blit(h_text, h_text.get_rect(center=self.btn_hard_rect.center))
+
+        # Zorlayıcı Mod Açıklaması
+        h_desc = self.desc_font.render("Bölüm geçişlerinde can yenilemesi OLMAZ!", True, (60,35,35))
+        self.screen.blit(h_desc, h_desc.get_rect(center=(self.btn_hard_rect.centerx + 10, self.btn_hard_rect.bottom + 30)))
+
+        pygame.display.flip()
+
+    def run(self) -> str:
+        clock = pygame.time.Clock()
+        while True:
+            clock.tick(60)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    if self.btn_normal_rect.collidepoint(event.pos):
+                        return "NORMAL"
+                    elif self.btn_hard_rect.collidepoint(event.pos):
+                        return "ZORLAYICI"
             self.draw()
