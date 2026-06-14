@@ -51,3 +51,87 @@ Samuraipygame/
     ├── boss_attack.wav                              # Boss vuruş sesi
     ├── victory.wav                                  # Genel oyun bitiş zafer sesi
     └── defeat.wav                                   # Ölüm ekranı sesi
+
+[BAŞLA: main.py]
+              │
+              ▼
+   [Pygame & Ekran Başlatma]
+              │
+              ▼
+    ┌───────────────────┐
+    │  ANA MENÜ EKRANI  │ ◄────────────────────────┐
+    └───────────────────┘                          │
+              │                                    │
+              ▼                                    │
+     ( Oyuncu Ne Seçti? )                          │
+      /                \                           │
+  [OYNA]             [ÇIKIŞ]                       │
+    │                    │                         │
+    ▼                    ▼                         │
+┌───────────────────┐ [Sistemden Çık]              │
+│ İSİM GİRİŞ EKRANI │                              │
+└───────────────────┘                              │
+    │ (Enter tuşu)                                 │
+    ▼                                              │
+[İsim Alınır & BattleGame Başlatılır]              │
+    │                                              │
+    ▼                                              │
+┌────────────────────────────────────────────────┐ │
+│ SAVAŞ DÖNGÜSÜ (BattleGame.run)                 │ │
+├────────────────────────────────────────────────┤ │
+│                                                │ │
+│ 1. JSON'dan soruları yükle ve karıştır.        │ │
+│ 2. Siyah ekran: "BÖLÜM X: ..." başlığını bas.  │ │
+│ 3. Bölüm arka plan müziğini (BGM) oynat.       │ │
+│                                                │ │
+│  ┌◄─────────────────────────────────────────┐  │ │
+│  │ OYUN DÖNGÜSÜ (60 FPS)                    │  │ │
+│  ├──────────────────────────────────────────┤  │ │
+│  │  - Ekranı ve Karakterleri Çizdir.        │  │ │
+│  │  - Ekranda soru varsa tıklama bekle.     │  │ │
+│  │                                          │  │ │
+│  │  ( Oyuncu Bir Şıkka Tıkladı mı? )        │  │ │
+│  │         /                    \           │  │ │
+│  │     [EVET]                  [HAYIR]      │  │ │
+│  │       │                        │         │  │ │
+│  │       ▼                        └─────────┼──┘
+│  │  [Soru Panelini Gizle]                   │
+│  │       │                                  │
+│  │  ( Cevap Doğru mu? )                     │
+│  │     /          \                         │
+│  │ [DOĞRU]      [YANLIŞ]                    │
+│  │   │              │                       │
+│  │   ▼              ▼                       │
+│  │[Yeşil Bant]  [Kırmızı Bant]              │
+│  │[Oyuncu Atılır][Boss Özel Vurur]          │
+│  │   │              │                       │
+│  │   └──────┬───────┘                       │
+│  │          ▼                               │
+│  │   ( Animasyon Bitti mi? )                │
+│  │      /              \                    │
+│  │  [HAYIR]          [EVET]                 │
+│  │    │                │                    │
+│  │    └─►(Bekle)       ▼                    │
+│  │               ( Oyuncu Canı <= 0? )      │
+│  │                  /            \          │
+│  │              [EVET]          [HAYIR]     │
+│  │                │                │        │
+│  │                ▼                ▼        │
+│  │          [OYUN BİTTİ]    ( Boss Canı <= 0? )
+│  │          [Defeat Sesi]      /          \ │
+│  │          [Menüye Dön]   [EVET]       [HAYIR]
+│  │                            │             │
+│  │                            ▼             ▼
+│  │                    [Düşman Yenildi] [Yeni Soru]
+│  │                    [Bant & Müziği Kes]   ▲
+│  │                            │             │
+│  │                    ( Son Boss mu? )      │
+│  │                       /        \         │
+│  │                   [EVET]      [HAYIR]    │
+│  │                     │            │       │
+│  │                     ▼            ▼       │
+│  │                [ZAFER]     [Sonraki Bölüm]
+│  │              [Victory Sesi] [Siyah Ekran]
+│  │              [Menüye Dön]        │       │
+│  │                                  └───────┘
+└────────────────────────────────────────────────┘
