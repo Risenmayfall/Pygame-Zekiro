@@ -134,7 +134,7 @@ class NameInputScreen:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN: # Enter tuşu
                         if self.player_name.strip() == "":
-                            self.player_name = "Samurai"
+                            self.player_name = "Sekiro"
                         # Tuş tekrarlarını kapat ki oyun içinde sorun olmasın
                         pygame.key.set_repeat(0, 0)
                         return self.player_name.strip()

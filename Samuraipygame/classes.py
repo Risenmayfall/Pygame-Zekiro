@@ -266,17 +266,17 @@ class BattleGame:
         # Oyuncu görünümü (Sol tarafta, ekranın ortasında)
         self.oyuncu_view = CharView(
             karakter = self.oyuncu,
-            img_normal_path = "Images/Chars/Samurai/SamuraiIdleFinal.png",
-            img_attack_path = "Images/Chars/Samurai/SamuraiAttackFinal.png",
-            img_damage_path = "Images/Chars/Samurai/SamuraiDamageFinal.png",
-            pos = pygame.Vector2(350, self.SCREEN_HEIGHT // 2 + 240)
+            img_normal_path = "Images/Chars/Samurai/SekiroIdle.png",
+            img_attack_path = "Images/Chars/Samurai/SekiroAttack.png",
+            img_damage_path = "Images/Chars/Samurai/SekiroDamage.png",
+            pos = pygame.Vector2(350, self.SCREEN_HEIGHT // 2 + 200)
         )
 
         # Boss görünümleri (Sağ tarafta)
         self.boss_views = {
-            self.bg_level1: CharView(self.boss_gyoubu, "Images/Chars/Gyoubu/GyoubuIdleFinal.png", "Images/Chars/Gyoubu/GyoubuAttackFinal.png", "Images/Chars/Gyoubu/GyoubuDamageFinal.png", pygame.Vector2(1150, self.SCREEN_HEIGHT // 2 + 150)),
-            self.bg_level2: CharView(self.boss_genichiro, "Images/Chars/Genichiro/GenichiroIdleFinal.png", "Images/Chars/Genichiro/GenichiroAttackFinal.png", "Images/Chars/Genichiro/GenichiroDamageFinal.png", pygame.Vector2(1150, self.SCREEN_HEIGHT // 2 + 185)),
-            self.bg_level3: CharView(self.boss_isshin, "Images/Chars/Isshin/IsshinIdleFinal.png", "Images/Chars/Isshin/IsshinAttackFinal.png", "Images/Chars/Isshin/IsshinDamageFinal.png", pygame.Vector2(1150, self.SCREEN_HEIGHT // 2 + 190))
+            self.bg_level1: CharView(self.boss_gyoubu, "Images/Chars/Gyoubu/GyoubuIdle.png", "Images/Chars/Gyoubu/GyoubuAttack.png", "Images/Chars/Gyoubu/GyoubuDamage.png", pygame.Vector2(1150, self.SCREEN_HEIGHT // 2 + 150)),
+            self.bg_level2: CharView(self.boss_genichiro, "Images/Chars/Genichiro/GenichiroIdle.png", "Images/Chars/Genichiro/GenichiroAttack.png", "Images/Chars/Genichiro/GenichiroDamage.png", pygame.Vector2(1150, self.SCREEN_HEIGHT // 2 + 150)),
+            self.bg_level3: CharView(self.boss_isshin, "Images/Chars/Isshin/IsshinIdle.png", "Images/Chars/Isshin/IsshinAttack.png", "Images/Chars/Isshin/IsshinDamage.png", pygame.Vector2(1150, self.SCREEN_HEIGHT // 2 + 150))
         }
 
         # Maksimum canları sözlükte tutarak seviyeye göre kolayca çekebiliriz
@@ -396,8 +396,12 @@ class BattleGame:
         self.screen.fill((0,0,0))
 
         # 2- Yazıyı oluştur ve hizala
-        yazi_yuzeyi = self.title_card_font.render(metin, True, (240, 240, 240))
-        yazi_rect = yazi_yuzeyi.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2))
+        if metin == "DEATH":
+            yazi_yuzeyi = self.title_card_font.render(metin,True,(250,20,20))
+            yazi_rect = yazi_yuzeyi.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2))
+        else:    
+            yazi_yuzeyi = self.title_card_font.render(metin, True, (240, 240, 240))
+            yazi_rect = yazi_yuzeyi.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2))
 
         # 3- Yazıyı ekrana bas ve güncelle
         self.screen.blit(yazi_yuzeyi, yazi_rect)
@@ -514,11 +518,9 @@ class BattleGame:
         
         # 2. Soru ve şıklar kalkmış haliyle ekranı bir kez temiz çizdiriyoruz
         self.current_bg.draw(self.screen)
-        self.oyuncu_view.draw(self.screen, self.hp_font, scale= 1.2)
+        self.oyuncu_view.draw(self.screen, self.hp_font, scale= 1.0)
         if self.current_boss == self.boss_isshin:
-            self.current_boss_view.draw(self.screen, self.hp_font, scale=1.5)
-        elif self.current_boss == self.boss_genichiro:
-            self.current_boss_view.draw(self.screen, self.hp_font, scale=1.2)
+            self.current_boss_view.draw(self.screen, self.hp_font, scale=0.8)
         else:
             self.current_boss_view.draw(self.screen, self.hp_font, scale=1.0)
         self.draw_health_bars()
@@ -670,11 +672,9 @@ class BattleGame:
         self.screen.blit(text_surface, text_rect)
 
         # 3- Karakterleri çiz
-        self.oyuncu_view.draw(self.screen, self.hp_font, scale = 1.2)
+        self.oyuncu_view.draw(self.screen, self.hp_font, scale = 1.0)
         if self.current_boss == self.boss_isshin:
-            self.current_boss_view.draw(self.screen, self.hp_font, scale = 1.5)
-        elif self.current_boss == self.boss_genichiro:
-            self.current_boss_view.draw(self.screen, self.hp_font, scale=1.2)
+            self.current_boss_view.draw(self.screen, self.hp_font, scale = 0.8)
         else:
             self.current_boss_view.draw(self.screen, self.hp_font, scale=1.0)
 

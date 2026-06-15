@@ -116,7 +116,7 @@
     },
     {
         "soru_metni": "Street Fighter serisindeki hangi karakter, elektriklenmesiyle ünlüdür?",
-        "secenekler": ["Ken", "Akuma", "Blanka", "Blanka"],
+        "secenekler": ["Ken", "Akuma", "Blanka", "Cammy"],
         "dogru_cevap_index": 2
     },
     {
