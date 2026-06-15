@@ -51,3 +51,118 @@ Samuraipygame/
     ├── boss_attack.wav                              # Boss vuruş sesi
     ├── victory.wav                                  # Genel oyun bitiş zafer sesi
     └── defeat.wav                                   # Ölüm ekranı sesi
+
+┌────────────────────────┐
+                               │     [MİMARİ BAŞLA]     │
+                               │        main.py         │
+                               └───────────┬────────────┘
+                                           │
+                                           ▼
+                               ┌────────────────────────┐
+                               │  pygame.mixer.init()   │
+                               │  Ses Motoru Tetiklenir │
+                               └───────────┬────────────┘
+                                           │
+                                           ▼
+ ┌─────────────────────────────────────────┴─────────────────────────────────────────┐
+ │                                   SAHNE YÖNETİMİ                                  │
+ ├───────────────────────────────────────────────────────────────────────────────────┤
+ │                                                                                   │
+ │  ┌────────────────────────┐       [OYNA]       ┌────────────────────────┐         │
+ │  │    STAGE 1: MENU       ├───────────────────►│ STAGE 2: NAME INPUT    │         │
+ │  │   (MainMenu Sınıfı)    │                    │ (NameInputScreen S.)   │         │
+ │  └──────────┬─────────────┘                    └───────────┬────────────┘         │
+ │             │                                              │ (Enter / Valid)      │
+ │             │ [ÇIKIŞ]                                      ▼                      │
+ │             ▼                                  ┌────────────────────────┐         │
+ │     [sys.exit()]                               │ STAGE 3: DIFFICULTY    │         │
+ │   Programı Sonlandır                           │ (DiffSelectionScreen)  │         │
+ │                                                └───────────┬────────────┘         │
+ │                                                            │                      │
+ │                                                            │ "NORMAL" /           │
+ │                                                            │ "ZORLAYICI"          │
+ │                                                            ▼                      │
+ │                                                ┌────────────────────────┐         │
+ │                                                │  STAGE 4: BATTLE GAME  │         │
+ │                                                │  (BattleGame Nesnesi)  │         │
+ │                                                └───────────┬────────────┘         │
+ └────────────────────────────────────────────────────────────┼──────────────────────┘
+                                                              │
+                                                              ▼
+┌────────────────────────────────────────────────────────────────────────────────────┐
+│ BATTLE GAME ÇEKİRDEK DÖNGÜSÜ (BattleGame.run)                                      │
+├────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                    │
+│  [1] VERİ BAĞLAMI: json_soru_yukle("sorular.json") -> Soru listesi yüklenir/karışır│
+│  [2] SİNEMATİK: bolum_ekrani_goster() -> Siyah perde çekilir (2.5 saniye)         │
+│  [3] AUDIO: level_musics[current_bg] -> İlgili boss arka plan müziği başlar        │
+│                                                                                    │
+│       ┌◄────────────────────────────────────────────────────────────────────────┐  │
+│       │ ANA DÖNGÜ (clock.tick(60))                                              │  │
+│       ├─────────────────────────────────────────────────────────────────────────┤  │
+│       │  A. Ekrana Çizim (draw):                                                │  │
+│       │     - current_bg.draw() (Arka plan render edilir)                       │  │
+│       │     - oyuncu_view & current_boss_view render edilir                     │  │
+│       │     - draw_health_bars() (Can barları güncellenir)                      │  │
+│       │     - if mevcut_soru ve not odul_ekrani_aktif: Soru & 4 Buton basılır   │  │
+│       │     - if odul_ekrani_aktif: Ödül Kartları (Şifa/Öfke) render edilir    │  │
+│       │                                                                         │  │
+│       │  B. Olay Yakalama (handle_events) & Karar Mekanizması:                  │  │
+│       │                                                                         │  │
+│       │     [DURUM I: ÖDÜL EKRANI AKTİF]                                        │  │
+│       │     ( Fare Tıklaması? )                                                 │  │
+│       │       ├──► [Şifa Kartı] ──► Can %25 İyileşir ──► odul_ekrani_aktif=False│  │
+│       │       └──► [Öfke Kartı] ──► GÜÇ * 1.5 Hasar  ──► odul_ekrani_aktif=False│  │
+│       │                                                                         │  │
+│       │     [DURUM II: NORMAL OYUN AKIŞI]                                       │  │
+│       │     ( Fare Tıklaması? )                                                 │  │
+│       │       └──► Tıklanan Buton İndeksi Kontrol Edilir                        │  │
+│       │               │                                                         │  │
+│       │               ▼                                                         │  │
+│       │       ( Tıklama == dogru_cevap_index? )                                 │  │
+│       │          /                         \                                    │  │
+│       │      [DOĞRU]                    [YANLIŞ]                                │  │
+│       │         │                          │                                    │  │
+│       │         ▼                          ▼                                    │  │
+│       │   dogru_serisi += 1          dogru_serisi = 0                           │  │
+│       │   "DOĞRU CEVAP" Bandı        "YANLIŞ CEVAP" Bandı                       │  │
+│       │   oyuncu.celik_firtina()     boss.ozel_yetenek()                        │  │
+│       │   Player Dash (+200px)       Boss Dash (-200px)                         │  │
+│       │   snd_player_attack.play()   snd_boss_attack.play()                     │  │
+│       │         │                          │                                    │  │
+│       │         └────────────┬─────────────┘                                    │  │
+│       │                      ▼                                                  │  │
+│       │             soru_bekleniyor = True                                      │  │
+│       │             mevcut_soru = None                                          │  │
+│       │                                                                         │  │
+│       │  C. Durum Güncelleme (update):                                          │  │
+│       │     - CharView.update_animation() -> Karakterlerin X konumları          │  │
+│       │       kare başına (dash_speed) kadar target_x'e yaklaştırılır.         │  │
+│       │     - Animasyon bittiğinde ve karakterler base_x'e döndüğünde:          │  │
+│       │          │                                                              │  │
+│       │          ▼                                                              │  │
+│       │       ( if dogru_serisi == 3? ) ──► odul_ekrani_aktif = True            │  │
+│       │          │                                                              │  │
+│       │          ▼                                                              │  │
+│       │       ( if oyuncu.can <= 0? )   ──► [YENİLGİ] ──► Defeat Sesi ──► MENU  │  │
+│       │          │                                                              │  │
+│       │          ▼                                                              │  │
+│       │       ( if boss.can <= 0? )                                             │  │
+│       │          ├──► [EVET] ──► boss_yenildi_ekrani()                          │  │
+│       │          │                  │                                           │  │
+│       │          │                  ▼                                           │  │
+│       │          │               ( if Son Seviye/Isshin? )                      │  │
+│       │          │                  ├──► [EVET] ──► [ZAFER] ──► Victory ──►MENU │  │
+│       │          │                  └──► [HAYIR]──► Seviye Atla (current_bg++)  │  │
+│       │          │                                  - Zorluk Modu == "NORMAL"   │  │
+│       │          │                                    ise oyuncu canı fulle.    │  │
+│       │          │                                  - bolum_ekrani_goster()     │  │
+│       │          │                                  - soru_bekleniyor = False   │  │
+│       │          │                                                              │  │
+│       │          └──► [HAYIR] ──► if not odul_ekrani_aktif:                      │  │
+│       │                           yeni_soru_sec()                               │  │
+│       │                           soru_bekleniyor = False                       │  │
+│       │                                                                         │  │
+│       └─────────────────────────────────────────────────────────────────────────┘  │
+│                                                                                    │
+└────────────────────────────────────────────────────────────────────────────────────┘
