@@ -13,10 +13,6 @@ Oyuncular kendi isimlerini seçerek zorlu bir kılıç dövüşü arenasındaki 
 * **3 Benzersiz Bölüm ve Boss:** * *Bölüm 1: Kaleye Giriş* -> **Gyoubu Oniwa** (Savaş Baltası Yeteneği)
     * *Bölüm 2: Lordu Kurtarma* -> **Genichiro Ashina** (Yıldırım Katana Yeteneği)
     * *Bölüm 3: Lordu Arındırma* -> **Isshin Ashina** (Mızrak Şarjı - %50 Daha Büyük Heybetli Görünüm)
-* **Sinematik Savaş Akışı:** 1. Oyuncu bir şıkka tıklar ve soru paneli anında gizlenir.
-    2. Ekran hafifçe buğulanarak tam ortada yeşil **"DOĞRU CEVAP"** veya kırmızı **"YANLIŞ CEVAP"** bandı belirir.
-    3. Bildirim bandı kaybolduğunda karakterler birbirine doğru **akıcı, süzülen bir atılma animasyonuyla (Smooth Dash)** fırlar ve ses efektleri eşliğinde dövüşürler.
-    4. Karakterler eski savunma pozisyonlarına tam olarak döndükleri an alt tarafta yeni soru belirir.
 * **Modüler JSON Altyapısı:** Sorular kaynak kodların içinde değil, tamamen harici bir `sorular.json` dosyasından UTF-8 kodlamasıyla (Türkçe karakter uyumlu) dinamik olarak çekilir.
 * **Epik Ses ve Müzik Yönetimi:** Her boss'un kendi savaşına özel arka plan müziği (BGM) ve her aksiyona özel (Vuruş, Zafer, Ölüm) ses efektleri.
 
