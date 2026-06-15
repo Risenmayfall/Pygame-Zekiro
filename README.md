@@ -10,9 +10,9 @@ Oyuncular kendi isimlerini seçerek zorlu bir kılıç dövüşü arenasındaki 
 ## 🚀 Öne Çıkan Özellikler
 
 * **Dinamik İsim Giriş Ekranı:** Oyuncuların klavyeden kendi adlarını yazarak oyuna dahil olabilecekleri, Türkçe karakter destekli giriş arayüzü.
-* **3 Benzersiz Bölüm ve Boss:** * *Bölüm 1: Kaleye Giriş* -> **Gyoubu Oniwa** (Savaş Baltası Yeteneği)
-    * *Bölüm 2: Lordu Kurtarma* -> **Genichiro Ashina** (Yıldırım Katana Yeteneği)
-    * *Bölüm 3: Lordu Arındırma* -> **Isshin Ashina** (Mızrak Şarjı - %50 Daha Büyük Heybetli Görünüm)
+* **3 Benzersiz Bölüm ve Boss:** * *Bölüm 1: Kaleye Giriş* -> **Gyoubu Oniwa**
+    * *Bölüm 2: Lordu Kurtarma* -> **Genichiro Ashina**
+    * *Bölüm 3: Lordu Arındırma* -> **Isshin Ashina**
 * **Modüler JSON Altyapısı:** Sorular kaynak kodların içinde değil, tamamen harici bir `sorular.json` dosyasından UTF-8 kodlamasıyla (Türkçe karakter uyumlu) dinamik olarak çekilir.
 * **Epik Ses ve Müzik Yönetimi:** Her boss'un kendi savaşına özel arka plan müziği (BGM) ve her aksiyona özel (Vuruş, Zafer, Ölüm) ses efektleri.
 
