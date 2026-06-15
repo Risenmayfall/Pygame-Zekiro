@@ -52,7 +52,7 @@ Samuraipygame/
     ├── victory.wav                                  # Genel oyun bitiş zafer sesi
     └── defeat.wav                                   # Ölüm ekranı sesi
 
-┌────────────────────────┐
+                               ┌────────────────────────┐
                                │     [MİMARİ BAŞLA]     │
                                │        main.py         │
                                └───────────┬────────────┘
