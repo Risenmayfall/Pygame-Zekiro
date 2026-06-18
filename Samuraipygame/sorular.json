@@ -308,5 +308,160 @@
         "soru_metni": "Hornet'in üstünde istasyonlar arasında seyahat edebildiği devasa yaratığın adı nedir?",
         "secenekler": ["The Last Stag", "The Bell Beast", "Willoh", "Garmond"],
         "dogru_cevap_index": 1
+    },
+    {
+        "soru_metni": "Tüm zamanların en çok satan oyunlarından biri olan Tetris'in mucidi aşağıdakilerden hangisidir?",
+        "secenekler": ["Alexey Pajitnov","Dmitry Pashkov", "Sergey Brin", "Vladimir Pokhilko"],
+        "dogru_cevap_index": 0
+    },
+    {
+        "soru_metni": "Doom serisinin en ikonik silahlarından biri olan 'BFG9000' kısaltmasındaki BFG'nin açılımı nedir?",
+        "secenekler": ["Bio Force Grenade", "Blast Fusion Generator", "Binary Fire Group", "Big f-ing gun"],
+        "dogru_cevap_index": 3
+    },
+    {
+        "soru_metni": "Doom (2016) ve Doom Eternal oyunlarında oyuncuyu düşmanı yakın dövüşle bitirdiği mekaniğin adı nedir?",
+        "secenekler": ["Blood Punch", "Glory Kill", "Ececutioner Mode", "Fatality"],
+        "dogru_cevap_index": 1
+    },
+    {
+        "soru_metni": "Doom (2016) oyununun endüstriyel metal ve 'djent' tarzındaki ödüllü müziklerini besteleyen sanatçı kimdir?",
+        "secenekler": ["Trent Reznor", "Akira Yamaoka", "Bobby Prince", "Mick Gordon"],
+        "dogru_cevap_index": 3
+    },
+    {
+        "soru_metni": "Doom serisindeki tüm olayları tetikleyen, Mars'ta araştırmalar yapan devasa şirketin adı nedir?",
+        "secenekler": ["Weyland-Yutani", "Aperture Science", "Union Aerospace Corporation", "Umbrella Corporation"],
+        "dogru_cevap_index": 2
+    },
+    {
+        "soru_metni": "LOL eSpor Türkiye'de önemli bir yere sahip ve 2x LEC Champion olarak anılan Türk oyuncu kimdir?",
+        "secenekler": ["Zeitnot", "Closer", "Armut", "113"],
+        "dogru_cevap_index": 2
+    },
+    {
+        "soru_metni": "Kavaklı'da yaşayıp Senna Swain Samira OTP olan inanılmaz oyuncu kimdir?",
+        "secenekler": ["Beyefendi", "OMG it is MUSHH", "Ehren", "Scarlet"],
+        "dogru_cevap_index": 0
+    },
+    {
+        "soru_metni": "Beşinci Kazekage Gaara'nın mutlak savunmasının arkasındaki gerçek güç nedir?",
+        "secenekler": ["Babası Rasa'nın yerleştirdiği gizli bir mühür", "Gaara'nın kendi bilinçaltı chakra kontrolü", "Annesi Karura'nın sevgisi ve iradesi", "Shukaku'nun iradesi"],
+        "dogru_cevap_index": 2
+    },
+    {
+        "soru_metni": "Tobirama Senju tarafından icat edilen ancak Orochimaru ve Kabuto tarafından geliştirilen yasaklı teknik hangisidir?",
+        "secenekler": ["Kuchiyose: Edo Tensei", "Fujin no Jutsu", "Kage Bunshin no Jutsu", "Hiraishin no Jutsu"],
+        "dogru_cevap_index": 0
+    },
+    {
+        "soru_metni": "Madara Uchiha'nın Mugen Tsukuyomi planını gerçekleştirmek için gereken son adım neydi?",
+        "secenekler": ["Rinne Sharingan'ı Ay'a yansıtmak", "Tüm kuyruklu canavarları toplamak", "Siyah Zetsu ile birleşmek", "Beş Kage'yi öldürmek"],
+        "dogru_cevap_index": 0
+    },
+    {
+        "soru_metni": "Kan bükme (Bloodbending) tekniğini ilk kez geliştiren ve Katara'ya öğreten karakter kimdir?",
+        "secenekler": ["Hama", "Prenses Yue", "Huub", "Pakku"],
+        "dogru_cevap_index": 0
+    },
+    {
+        "soru_metni": "Zuko'nun anne tarafındaki büyük büyükbabası kimdir?",
+        "secenekler": ["Kyoshi", "Sozin", "Roku", "Iroh"],
+        "dogru_cevap_index": 2
+    },
+    {
+        "soru_metni": "Toph Beifong, metal bükebildiğini keşfettiğinde hangi maddede bulunan safsızlıkları fark etmiştir?",
+        "secenekler": ["Demir molekülleri", "Meteor cevheri", "İşlenmiş toprak parçacıkları", "Kömür kalıntıları"],
+        "dogru_cevap_index": 2
+    },
+    {
+        "soru_metni": "Beyaz Lotus Tarikatı, Ba Sing Se'yi kurtarmak için toplandığında liderleri (Grand Lotus) kimdi?",
+        "secenekler": ["Bumi", "Jeong Jeong", "Piandao", "Iroh"],
+        "dogru_cevap_index": 3
+    },
+    {
+        "soru_metni": "Aang'in Avatar Hali'ne (Avatar State) girmesini engelleyen düşünce/duygu nedir?",
+        "secenekler": ["Dünyevi Bağlılıklar", "Geçmişteki korkuları", "Hava bükücülerin yok edilmesi suçluluğu", "Öfke kontrolü"],
+        "dogru_cevap_index": 0
+    },
+    {
+        "soru_metni": "Avatar Kyoshi kaç yıl yaşamıştır?",
+        "secenekler": ["140", "82", "120", "230"],
+        "dogru_cevap_index": 3
+    },
+    {
+        "soru_metni": "Ateş bükmenin gerçek kaynağını öğrenmek için Aang ve Zuko hangi antik yaratıklarla karşılaşmışlardır?",
+        "secenekler": ["Appa ve Momo", "Fang ve Druk", "Ran ve Shaw", "Badgermoles"],
+        "dogru_cevap_index": 2
+    },
+    {
+        "soru_metni": "Prenses Azula'nın ateşinin mavi olmasının temel sebebi nedir?",
+        "secenekler": ["Ateşinin aşırı derecede sıcak ve saf olması", "Ejderha kanı taşıması", "Ruhunun kötü olması", "Yıldırım bükme yeteneği"],
+        "dogru_cevap_index": 0
+    },
+    {
+        "soru_metni": "Basketbol tarihi ve gündeminde 'Slenderman' olarak anılan profesyonel basketbolcu kimdir?",
+        "secenekler": ["Kevin Durant", "Victor Wembanyama", "Anthony Davis", "Anthony Edwards"],
+        "dogru_cevap_index": 1
+    },
+    {
+        "soru_metni": "NBA tarihinde 22 yaşında bu ödülü kazanarak 'En Genç MVP' olan oyuncu kimdir?",
+        "secenekler": ["Wes Unseld", "Luka Doncic", "Bob McAdoo", "Derrick Rose"],
+        "dogru_cevap_index": 3
+    },
+    {
+        "soru_metni": "Passione çetesinin gizemli lideri Diavolo'nun sahip olduğu 'King Crimson' Stand'ının temel yeteneği nedir?",
+        "secenekler": ["Paralel evrenler arasında geçiş yapmak", "Ölen kişileri geri getirmek", "Zamanın bir bölümü silmek ve geleceği öngörmek", "Zamanı durdurmak"],
+        "dogru_cevap_index": 2
+    },
+    {
+        "soru_metni": "Avengers: Infinity War filminde, Ruh Taşı'nı koruyan 'Bekçi' (Red Skull) hangi gezegende bulunmaktadır?",
+        "secenekler": ["Titan", "Morag", "Knowhere", "Vormir"],
+        "dogru_cevap_index": 3
+    },
+    {
+        "soru_metni": "Çizgi romanlarda Avengers ekibinin kurucu üyeleri arasında olup ilk Avengers filminde yer almayan karakter hangisidir?",
+        "secenekler": ["Black Widow", "Ant-Man", "Captain America", "Hawkeye"],
+        "dogru_cevap_index": 1
+    },
+    {
+        "soru_metni": "Spider-Man: Homecoming filminde Peter Parker'ın yapay zekasına verdiği isim nedir?",
+        "secenekler": ["KAREN", "FRIDAY", "JARVIS", "EDITH"],
+        "dogru_cevap_index": 0
+    },
+    {
+        "soru_metni": "Wanda Maximoff ve Pietro Maximoff MCU'da güçlerini hangi Sonsuzluk Taşı üzerindeki deneyler sonucu almışlardır?",
+        "secenekler": ["Zihin Taşı", "Güç Taşı", "Gerçeklik Taşı", "Uzay Taşı"],
+        "dogru_cevap_index": 0
+    },
+    {
+        "soru_metni": "Iron Man (2008) filminin sonunda Tony Stark'ın okuduğu gazetedeki manşette ne yazmaktadır?",
+        "secenekler": ["The Golden Avenger", "Iron Man", "Who is Iron Man", "Stark Industries Scandal"],
+        "dogru_cevap_index": 1
+    },
+    {
+        "soru_metni": "Justice League'in çizgi romanlardaki ilk göründüğü hikaye hangi düşmana karşıdır?",
+        "secenekler": ["Lex Luthor", "Steppenwolf", "Vandal Savage", "Starro the Conqueror"],
+        "dogru_cevap_index": 3
+    },
+    {
+        "soru_metni": "Batman Arkham serilerinin en iyi olarak kabul edilen boss fight'ı hangisidir?",
+        "secenekler": ["Bane", "Deathstroke", "Arkham Knight", "Riddler"],
+        "dogru_cevap_index": 1
+    },
+    {
+        "soru_metni": "Deathstroke karakterinin gerçek adı hangisidir?",
+        "secenekler": ["Slade Wilson", "Dick Grayson", "Floyd Lawton", "Oswald Cobblepot"],
+        "dogru_cevap_index": 0
+    },
+    {
+        "soru_metni": "Kratos'un kullandığı Leviathan Baltası (Leviathan Axe) asıl kimin için ve kim tarafından dövülmüştür?",
+        "secenekler": ["Kratos için Zeus tarafından", "Laufey için Brok ve Sindri kardeşler tarafından", "Thor için Odin tarafından", "Atreus için devler tarafından"],
+        "dogru_cevap_index": 1
+    },
+    {
+        "soru_metni": "İskandinav tanrısı Baldur'un tek zayıflığı olan ve annesi Freya'nın her şeyden sakladığı bitki nedir?",
+        "secenekler": ["Zehirli Sarmaşık", "Yggdrasil Yaprağı", "Ateş Çiçeği", "Ökseotu"],
+        "dogru_cevap_index": 3
     }
 ]
